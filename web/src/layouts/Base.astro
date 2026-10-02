@@ -37,6 +37,10 @@ const {
 
 warnMissingBusinessInfo();
 
+// Launch switch: until SITE_LIVE=true is set (in Netlify, once the real domain points here),
+// every page is noindex so the *.netlify.app copy can't compete with the live GoDaddy site.
+const isLive = import.meta.env.SITE_LIVE === 'true';
+
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const share = await getImage({ src: image, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
 const shareUrl = new URL(share.src, Astro.site).href;
@@ -53,7 +57,7 @@ const jsonLd = [businessSchema({ logo: logoUrl, image: shareUrl }), ...schema];
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {(noindex || !isLive) && <meta name="robots" content="noindex" />}
 
     <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

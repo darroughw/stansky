@@ -17,6 +17,8 @@ npx astro check  # type-check
 - `web/src/lib/schema.ts` – structured data builders.
 - Generated: `/sitemap-index.xml`, `/robots.txt`, `/llms.txt`.
 
-## Environment
+## Hosting (Netlify)
 
-- `PUBLIC_FORM_ENDPOINT` – where the contact form posts (Formspree/Web3Forms/Basin URL).
+- `netlify.toml` builds `web/` and publishes `web/dist`. Pushing to `main` deploys.
+- Contact form uses Netlify Forms (form name `estimate`). Turn on email notifications in Netlify > Forms.
+- **Launch switch:** every page is `noindex` until the Netlify env var `SITE_LIVE=true` is set. Set it only after stanskyconstruction.com points at Netlify, then redeploy.

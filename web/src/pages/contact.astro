@@ -8,9 +8,9 @@ import { breadcrumbSchema } from '../lib/schema';
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const site = Astro.site!.href.replace(/\/$/, '');
 
-// Static site: the form posts to a form service (Formspree, Web3Forms, Basin...) set in .env.
-const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
-if (!endpoint) console.warn('[stansky] PUBLIC_FORM_ENDPOINT is not set; the contact form has nowhere to send.');
+// Handled by Netlify Forms: Netlify finds this form in the built HTML at deploy time,
+// stores submissions and emails them (set notifications in Netlify > Forms).
+// It only works on Netlify; locally the submit just lands on the thanks page.
 ---
 
 <Base
@@ -52,7 +52,8 @@ if (!endpoint) console.warn('[stansky] PUBLIC_FORM_ENDPOINT is not set; the cont
       </dl>
     </div>
 
-    <form class="form" method="POST" action={endpoint ?? '#'}>
+    <form class="form" name="estimate" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="estimate" />
       <p class="form__note">All fields are required unless marked optional.</p>
 
       <div class="field">
@@ -88,10 +89,9 @@ if (!endpoint) console.warn('[stansky] PUBLIC_FORM_ENDPOINT is not set; the cont
 
       <!-- Spam trap: hidden from people and assistive tech, bots fill it in. -->
       <div class="trap" aria-hidden="true">
-        <label for="company">Leave this empty</label>
-        <input id="company" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+        <label for="bot-field">Leave this empty</label>
+        <input id="bot-field" name="bot-field" type="text" tabindex="-1" autocomplete="off" />
       </div>
-      <input type="hidden" name="_next" value={new URL('/contact/thanks/', Astro.site).href} />
 
       <button class="button" type="submit">Send request</button>
     </form>
