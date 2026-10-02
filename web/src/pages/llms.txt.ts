@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ site }) => {
   const b = business;
   const services = (await getCollection('services')).sort((x, y) => x.data.order - y.data.order);
   const projects = (await getCollection('projects')).sort((x, y) => x.data.order - y.data.order);
-  const faqs = await getCollection('faqs');
+  const faqs = await getCollection('faqs', (f) => !f.data.placeholder);
 
   const facts = [
     `Owner: ${b.owner}`,

@@ -1,0 +1,78 @@
+---
+// Questions as native disclosure widgets: keyboard and screen-reader friendly with no JS.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  faqs: CollectionEntry<'faqs'>[];
+}
+const faqs = [...Astro.props.faqs].sort((a, b) => a.data.order - b.data.order);
+---
+
+<div class="faqs">
+  {
+    faqs.map((f) => (
+      <details class="faq">
+        <summary>
+          <span class="faq__q">{f.data.question}</span>
+          {f.data.placeholder && <span class="faq__flag label">Placeholder</span>}
+        </summary>
+        <p class="faq__a">{f.data.answer}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faqs {
+    max-width: var(--measure);
+    border-bottom: 1px solid var(--rule);
+  }
+  .faq {
+    border-top: 1px solid var(--rule);
+  }
+  .faq summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    min-height: 44px;
+    padding-block: var(--space-s);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Plus that turns into a minus when open */
+  .faq summary::after {
+    content: '+';
+    margin-left: auto;
+    flex: none;
+    width: 1.5rem;
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--cab);
+  }
+  .faq[open] summary::after {
+    content: '−';
+  }
+  .faq summary:hover .faq__q {
+    text-decoration: underline;
+    text-decoration-color: var(--sage);
+    text-decoration-thickness: 2px;
+  }
+  .faq__flag {
+    flex: none;
+    padding: 0.1em 0.5em;
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+    color: #8a4b00; /* 6.0:1 on paper */
+    font-size: 0.75rem;
+  }
+  .faq__a {
+    margin: 0 0 var(--space-m);
+    color: var(--ink-soft);
+  }
+</style>

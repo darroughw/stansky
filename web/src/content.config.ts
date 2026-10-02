@@ -85,15 +85,21 @@ const projects = defineCollection({
 });
 
 // Only published questions are fetched; unanswered drafts stay in the Studio.
+// Placeholder answers (written for Jack to review) are dropped once the site is live.
+const live = import.meta.env.SITE_LIVE === 'true';
 const faqs = defineCollection({
   loader: sanityLoader(
     'faqs',
-    `*[_type == "faq" && defined(answer)] | order(question asc){ "id": _id, question, answer, "service": service->slug.current }`,
+    `*[_type == "faq" && defined(answer) ${live ? '&& placeholder != true' : ''}] | order(order asc, question asc){
+      "id": _id, question, answer, placeholder, order, "service": service->slug.current
+    }`,
   ),
   schema: z.object({
     question: z.string(),
     answer: z.string(),
     service: z.string().optional(),
+    placeholder: z.boolean().default(false),
+    order: z.number().default(100),
   }),
 });
 

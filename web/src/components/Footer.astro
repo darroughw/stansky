@@ -5,6 +5,7 @@ import { business, telHref } from '../data/business';
 import truck from '../assets/brand/truck.svg';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const hasFaqs = (await getCollection('faqs')).length > 0;
 const year = new Date().getFullYear();
 const profiles = [
   { label: 'Instagram', href: business.social.instagram },
@@ -32,6 +33,7 @@ const profiles = [
         {business.phone && <li><a href={telHref(business.phone)}>{business.phone}</a></li>}
         {business.email && <li><a href={`mailto:${business.email}`}>{business.email}</a></li>}
         <li><a href="/contact/">Request an estimate</a></li>
+        {hasFaqs && <li><a href="/faq/">Questions &amp; answers</a></li>}
       </ul>
       {business.hours && <p>{business.hours}</p>}
     </div>

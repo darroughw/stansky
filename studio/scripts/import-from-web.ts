@@ -62,7 +62,7 @@ async function run() {
 
   console.log('Services')
   const svcDir = path.join(WEB, 'content/services')
-  for (const f of fs.readdirSync(svcDir).filter((f) => f.endsWith('.md'))) {
+  for (const f of fs.readdirSync(svcDir).filter((f: string) => f.endsWith('.md'))) {
     const file = path.join(svcDir, f)
     const slug = f.replace(/\.md$/, '')
     const {data, body} = readMd(file)
@@ -83,7 +83,7 @@ async function run() {
 
   console.log('Projects')
   const projDir = path.join(WEB, 'content/projects')
-  for (const f of fs.readdirSync(projDir).filter((f) => f.endsWith('.md'))) {
+  for (const f of fs.readdirSync(projDir).filter((f: string) => f.endsWith('.md'))) {
     const file = path.join(projDir, f)
     const slug = f.replace(/\.md$/, '')
     const {data, body} = readMd(file)

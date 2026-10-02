@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import FaqList from '../components/FaqList.astro';
+import EstimateCta from '../components/EstimateCta.astro';
+import { business } from '../data/business';
+import { breadcrumbSchema, faqSchema } from '../lib/schema';
+import { capsHtml } from '../lib/caps';
+
+const faqs = await getCollection('faqs');
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+
+const groups = [
+  { id: 'general', title: 'Working with Stansky Construction', faqs: faqs.filter((f) => !f.data.service) },
+  ...services.map((s) => ({ id: s.id, title: s.data.shortTitle, faqs: faqs.filter((f) => f.data.service === s.id) })),
+].filter((g) => g.faqs.length);
+
+// Only confirmed answers go into Google's FAQ data.
+const confirmed = faqs.filter((f) => !f.data.placeholder);
+const site = Astro.site!.href.replace(/\/$/, '');
+const schema: object[] = [
+  breadcrumbSchema([
+    { name: 'Home', url: `${site}/` },
+    { name: 'FAQ', url: `${site}/faq/` },
+  ]),
+];
+if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
+const hasPlaceholders = faqs.some((f) => f.data.placeholder);
+// Nothing confirmed yet: keep the page out of search; the nav link is hidden too.
+const empty = faqs.length === 0;
+---
+
+<Base
+  title="Remodeling Questions & Answers | Stansky Construction, Winston-Salem"
+  description={`Answers to common questions about remodeling, decks and ADUs in ${business.serviceArea.join(' and ')}, NC: cost, timelines, permits and estimates.`}
+  schema={schema}
+  noindex={empty}
+>
+  <div class="wrap section">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'FAQ', href: '/faq/' }]} />
+    <h1>Questions &amp; answers</h1>
+    <p class="intro">
+      Straight answers to what homeowners ask Jack most. Don't see yours? <a href="/contact/">Ask him directly</a>.
+    </p>
+    {
+      hasPlaceholders && (
+        <p class="review-note" role="note">
+          <strong>Draft for review.</strong> Answers marked “Placeholder” are drafts for Jack to confirm; anything in
+          [brackets] needs his real numbers. They're hidden automatically when the site launches.
+        </p>
+      )
+    }
+
+    {empty && <p>Answers are on the way. In the meantime, <a href="/contact/">ask Jack directly</a>.</p>}
+
+    <nav class="jump" aria-label="Question topics" hidden={empty}>
+      <ul>
+        {groups.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}
+      </ul>
+    </nav>
+
+    {
+      groups.map((g) => (
+        <section class="group" id={g.id} aria-labelledby={`${g.id}-heading`}>
+          <h2 id={`${g.id}-heading`} set:html={capsHtml(g.title)} />
+          <FaqList faqs={g.faqs} />
+          {g.id !== 'general' && (
+            <p class="group__more">
+              <a href={`/services/${g.id}/`}>More about {g.title.toLowerCase()}</a>
+            </p>
+          )}
+        </section>
+      ))
+    }
+  </div>
+  <EstimateCta heading="Still have questions?" />
+</Base>
+
+<style>
+  h1 {
+    font-size: var(--step-3);
+  }
+  .intro {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .review-note {
+    padding: var(--space-s) var(--space-m);
+    border-left: 4px solid #8a4b00;
+    background: #fbf3e6;
+  }
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+    list-style: none;
+    padding: 0;
+    margin: var(--space-l) 0 0;
+    max-width: none;
+  }
+  .jump a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    font-weight: 600;
+  }
+  .group {
+    margin-top: var(--space-xl);
+    scroll-margin-top: var(--space-m);
+  }
+  .group h2 {
+    font-size: var(--step-2);
+  }
+  .group__more {
+    margin-top: var(--space-s);
+  }
+</style>

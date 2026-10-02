@@ -1,11 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import Wordmark from './Wordmark.astro';
 import { business, telHref } from '../data/business';
 
+// FAQ only appears once there are answers to show (placeholders are dropped at launch).
+const hasFaqs = (await getCollection('faqs')).length > 0;
 const links = [
   { href: '/services/', label: 'Services' },
   { href: '/portfolio/', label: 'Our work' },
   { href: '/about/', label: 'About' },
+  ...(hasFaqs ? [{ href: '/faq/', label: 'FAQ' }] : []),
   { href: '/contact/', label: 'Contact' },
 ];
 const path = Astro.url.pathname;

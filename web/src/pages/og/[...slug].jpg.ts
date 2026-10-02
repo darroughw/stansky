@@ -28,6 +28,7 @@ export const getStaticPaths = (async () => {
     portfolio: { eyebrow: `Our work · ${where}`, title: 'Real projects, real photos', photo: porch },
     about: { eyebrow: business.name, title: `Meet ${business.owner.split(' ')[0]}`, photo: porch },
     contact: { eyebrow: business.name, title: 'Request an estimate' },
+    faq: { eyebrow: `${business.name} · ${where}`, title: 'Questions & answers' },
   };
   for (const s of services) {
     cards[`services/${s.id}`] = { eyebrow: `${business.name} · ${where}`, title: s.data.shortTitle, photo: photoOf(s.data.cover) };

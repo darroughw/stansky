@@ -31,6 +31,28 @@ export const faq = defineType({
       type: 'reference',
       to: [{type: 'service'}],
     }),
+    defineField({
+      name: 'placeholder',
+      title: 'Placeholder answer',
+      description:
+        'On while the answer is a draft written for Jack to review. The site labels it "Placeholder", leaves it out of Google\'s FAQ data, and hides it entirely once the site launches. Turn off when Jack confirms the answer.',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'order',
+      title: 'Sort order',
+      description: 'Lower numbers show first.',
+      type: 'number',
+      initialValue: 100,
+    }),
   ],
-  preview: {select: {title: 'question', subtitle: 'service.shortTitle'}},
+  orderings: [{title: 'Sort order', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
+  preview: {
+    select: {title: 'question', service: 'service.shortTitle', placeholder: 'placeholder'},
+    prepare: ({title, service, placeholder}) => ({
+      title,
+      subtitle: [placeholder && 'Placeholder', service ?? 'General'].filter(Boolean).join(' · '),
+    }),
+  },
 })

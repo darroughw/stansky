@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
+import FaqList from '../../components/FaqList.astro';
 import { business } from '../../data/business';
 import { breadcrumbSchema, serviceSchema, faqSchema } from '../../lib/schema';
 import { capsHtml } from '../../lib/caps';
@@ -36,7 +37,9 @@ const schema: object[] = [
     { name: d.shortTitle, url },
   ]),
 ];
-if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
+// Only confirmed answers go into Google's FAQ data.
+const confirmed = faqs.filter((f) => !f.data.placeholder);
+if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
 ---
 
 <Base
@@ -99,12 +102,8 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
       faqs.length > 0 && (
         <section class="wrap section" aria-labelledby="faq-heading">
           <h2 id="faq-heading">Common questions</h2>
-          {faqs.map((f) => (
-            <details class="faq">
-              <summary>{f.data.question}</summary>
-              <p>{f.data.answer}</p>
-            </details>
-          ))}
+          <FaqList faqs={faqs} />
+          <p class="faq-more"><a href="/faq/">All questions &amp; answers</a></p>
         </section>
       )
     }
@@ -143,17 +142,8 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
     margin-top: var(--space-l);
   }
-  .faq {
-    border-top: 1px solid var(--rule);
-    padding-block: var(--space-s);
-    max-width: var(--measure);
-  }
-  .faq summary {
-    cursor: pointer;
-    font-weight: 700;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
+  .faq-more {
+    margin-top: var(--space-s);
   }
   @media (min-width: 60rem) {
     .intro__grid {
