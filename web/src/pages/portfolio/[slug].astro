@@ -31,8 +31,6 @@ const photos: Photo[] = [...(d.before ? [{ ...d.before, caption: 'Before' }] : [
 <Base
   title={metaTitle}
   description={d.summary}
-  image={d.cover}
-  imageAlt={d.cover.alt}
   type="article"
   schema={[
     breadcrumbSchema([

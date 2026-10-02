@@ -7,6 +7,7 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
 import { business } from '../../data/business';
 import { breadcrumbSchema, serviceSchema, faqSchema } from '../../lib/schema';
+import { capsHtml } from '../../lib/caps';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -41,8 +42,6 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
 <Base
   title={d.metaTitle}
   description={d.metaDescription}
-  image={d.cover}
-  imageAlt={d.cover?.alt}
   schema={schema}
 >
   <article>
@@ -56,7 +55,7 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
       />
       <div class="intro__grid">
         <div>
-          <h1>{d.title}</h1>
+          <h1 set:html={capsHtml(d.title)} />
           <p class="intro__summary">{d.summary}</p>
           <p class="label">Serving {business.serviceArea.join(', ')}, {business.region}</p>
         </div>

@@ -125,6 +125,10 @@ a:hover {
 }
 
 /* Condensed utility voice: eyebrows, locations, metadata. */
+.keep-case {
+  text-transform: none;
+}
+
 .label {
   font-stretch: 75%;
   font-weight: 650;

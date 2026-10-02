@@ -6,6 +6,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
 import { business } from '../../data/business';
 import { breadcrumbSchema } from '../../lib/schema';
+import { capsHtml } from '../../lib/caps';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const site = Astro.site!.href.replace(/\/$/, '');
@@ -49,7 +50,7 @@ const site = Astro.site!.href.replace(/\/$/, '');
             )}
             <div>
               <h2 class="row__title">
-                <a href={`/services/${s.id}/`}>{s.data.title}</a>
+                <a href={`/services/${s.id}/`} set:html={capsHtml(s.data.title)} />
               </h2>
               <p>{s.data.summary}</p>
             </div>
