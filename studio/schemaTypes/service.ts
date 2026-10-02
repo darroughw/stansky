@@ -1,0 +1,76 @@
+import {defineField, defineType} from 'sanity'
+import {WrenchIcon} from '@sanity/icons/Wrench'
+
+export const service = defineType({
+  name: 'service',
+  title: 'Service',
+  type: 'document',
+  icon: WrenchIcon,
+  groups: [
+    {name: 'main', title: 'Page', default: true},
+    {name: 'seo', title: 'Google'},
+  ],
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'Page heading',
+      description: 'Include the town, e.g. "Bathroom remodeling in Winston-Salem".',
+      type: 'string',
+      group: 'main',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'shortTitle',
+      title: 'Short name',
+      description: 'For menus and cards, e.g. "Bathrooms".',
+      type: 'string',
+      group: 'main',
+      validation: (rule) => rule.required().max(24),
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Web address',
+      description: 'Changing this breaks existing links. Leave it alone once the page is live.',
+      type: 'slug',
+      group: 'main',
+      options: {source: 'shortTitle'},
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'summary',
+      title: 'One-sentence summary',
+      type: 'text',
+      rows: 2,
+      group: 'main',
+      validation: (rule) => rule.required().max(200),
+    }),
+    defineField({name: 'cover', title: 'Main photo', type: 'photo', group: 'main'}),
+    defineField({name: 'body', title: 'Page text', type: 'body', group: 'main'}),
+    defineField({
+      name: 'order',
+      title: 'Sort order',
+      type: 'number',
+      group: 'main',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'metaTitle',
+      title: 'Google title',
+      description: 'The blue link in Google results. Under 60 characters.',
+      type: 'string',
+      group: 'seo',
+      validation: (rule) => rule.required().max(60),
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'Google description',
+      description: 'The gray text under the link. Under 160 characters.',
+      type: 'text',
+      rows: 3,
+      group: 'seo',
+      validation: (rule) => rule.required().max(160),
+    }),
+  ],
+  orderings: [{title: 'Sort order', name: 'order', by: [{field: 'order', direction: 'asc'}]}],
+  preview: {select: {title: 'shortTitle', subtitle: 'title', media: 'cover'}},
+})

@@ -14,8 +14,12 @@ const place = [neighborhood, location].filter(Boolean).join(', ');
 <article class="card">
   <Picture
     src={cover.src}
+    width={cover.width}
+    height={cover.height}
     alt={cover.alt}
+    style={`object-position: ${cover.position}`}
     formats={['avif', 'webp']}
+                fallbackFormat="jpg"
     widths={[400, 640, 960]}
     sizes="(min-width: 60rem) 33vw, (min-width: 40rem) 50vw, 100vw"
     class="card__img"

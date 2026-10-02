@@ -8,5 +8,7 @@ export default defineConfig({
   integrations: [sitemap({ filter: (page) => !page.includes('/contact/thanks/') })],
   image: {
     responsiveStyles: true,
+    // Sanity photos are downloaded and optimized at build time like local ones.
+    domains: ['cdn.sanity.io'],
   },
 });

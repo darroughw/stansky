@@ -23,7 +23,7 @@ const d = service.data;
 const projects = (await getCollection('projects', (p) => p.data.service?.id === service.id)).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const faqs = await getCollection('faqs', (f) => !f.data.draft && f.data.service === service.id);
+const faqs = await getCollection('faqs', (f) => f.data.service === service.id);
 
 const site = Astro.site!.href.replace(/\/$/, '');
 const url = `${site}/services/${service.id}/`;
@@ -41,7 +41,7 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
 <Base
   title={d.metaTitle}
   description={d.metaDescription}
-  image={d.cover?.src}
+  image={d.cover}
   imageAlt={d.cover?.alt}
   schema={schema}
 >
@@ -64,8 +64,12 @@ if (faqs.length) schema.push(faqSchema(faqs.map((f) => f.data)));
           d.cover && (
             <Picture
               src={d.cover.src}
+              width={d.cover.width}
+              height={d.cover.height}
+              style={`object-position: ${d.cover.position}`}
               alt={d.cover.alt}
               formats={['avif', 'webp']}
+                fallbackFormat="jpg"
               widths={[480, 720, 960]}
               sizes="(min-width: 60rem) 45vw, 100vw"
               loading="eager"

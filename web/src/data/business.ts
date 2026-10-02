@@ -1,35 +1,57 @@
-// Single source of truth for name / phone / service area (NAP).
-// These values must match Google Business Profile, Angi, HomeAdvisor and Instagram exactly.
-// Will become the Sanity "Business info" singleton; empty strings are hidden on the site
-// and reported as warnings at build time (see src/lib/checks.ts).
+// Name / phone / service area (NAP), edited in Sanity under "Business info".
+// Fetched once per build. Empty values are hidden on the site and reported
+// as warnings at build time (see src/lib/checks.ts).
+import { sanity } from '../lib/sanity';
+
+type BusinessDoc = {
+  name?: string;
+  legalName?: string;
+  owner?: string;
+  phone?: string;
+  email?: string;
+  city?: string;
+  region?: string;
+  postalCode?: string;
+  serviceArea?: string[];
+  hours?: string;
+  licenseNumber?: string;
+  insured?: boolean;
+  foundedYear?: number;
+  instagram?: string;
+  google?: string;
+  angi?: string;
+  homeAdvisor?: string;
+};
+
+const doc: BusinessDoc = (await sanity.fetch(`*[_id == "business"][0]`)) ?? {};
 
 export const business = {
-  name: 'Stansky Construction',
-  legalName: '', // TODO: exact registered name, e.g. "Stansky Construction LLC"
-  owner: 'Jack Stansky',
+  name: doc.name ?? 'Stansky Construction',
+  legalName: doc.legalName ?? '',
+  owner: doc.owner ?? 'Jack Stansky',
   url: 'https://stanskyconstruction.com',
-  phone: '', // TODO: display format, e.g. "(336) 555-0123"
-  email: '', // TODO
-  city: 'Winston-Salem',
-  region: 'NC',
-  postalCode: '', // TODO: optional; only if Jack wants it public
-  // Towns Jack actually takes work in. Clemmons comes from the current portfolio.
-  serviceArea: ['Winston-Salem', 'Clemmons'], // TODO: confirm and extend (Kernersville, Lewisville, Pfafftown, ...)
-  licenseNumber: '', // TODO: NC general contractor license #, if licensed
-  insured: null as boolean | null, // TODO: true once confirmed
-  foundedYear: null as number | null, // TODO
-  hours: '', // TODO, e.g. "Mon–Fri 7am–5pm"
+  phone: doc.phone ?? '',
+  email: doc.email ?? '',
+  city: doc.city ?? 'Winston-Salem',
+  region: doc.region ?? 'NC',
+  postalCode: doc.postalCode ?? '',
+  serviceArea: doc.serviceArea?.length ? doc.serviceArea : ['Winston-Salem'],
+  licenseNumber: doc.licenseNumber ?? '',
+  insured: doc.insured ?? null,
+  foundedYear: doc.foundedYear ?? null,
+  hours: doc.hours ?? '',
+  // Brand content, not something Jack edits.
   verse: {
     text: 'Whatever you do, work at it with all your heart, as working for the Lord and not for man.',
     cite: 'Colossians 3:23',
   },
   social: {
-    instagram: 'https://www.instagram.com/stanskyconstruction/',
-    angi: '', // TODO: profile URL
-    homeAdvisor: '', // TODO: profile URL
-    google: '', // TODO: Google Business Profile URL
+    instagram: doc.instagram ?? '',
+    angi: doc.angi ?? '',
+    homeAdvisor: doc.homeAdvisor ?? '',
+    google: doc.google ?? '',
   },
-} as const;
+};
 
 export const telHref = (phone: string) => `tel:+1${phone.replace(/\D/g, '').replace(/^1/, '')}`;
 

@@ -36,8 +36,12 @@ const site = Astro.site!.href.replace(/\/$/, '');
             {s.data.cover && (
               <Picture
                 src={s.data.cover.src}
+                width={s.data.cover.width}
+                height={s.data.cover.height}
+                style={`object-position: ${s.data.cover.position}`}
                 alt=""
                 formats={['avif', 'webp']}
+                fallbackFormat="jpg"
                 widths={[320, 640]}
                 sizes="(min-width: 48rem) 20rem, 100vw"
                 class="row__img"

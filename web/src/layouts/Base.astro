@@ -3,6 +3,7 @@ import '../styles/global.css';
 import fontUrl from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import type { Photo } from '../lib/sanity';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { business } from '../data/business';
@@ -17,7 +18,7 @@ interface Props {
   /** Meta and social description, under ~160 characters. */
   description: string;
   /** Share image; defaults to a project photo. */
-  image?: ImageMetadata;
+  image?: ImageMetadata | Photo;
   imageAlt?: string;
   type?: 'website' | 'article';
   /** Extra JSON-LD objects for this page. */
@@ -42,7 +43,7 @@ warnMissingBusinessInfo();
 const isLive = import.meta.env.SITE_LIVE === 'true';
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const share = await getImage({ src: image, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
+const share = await getImage({ src: 'position' in image ? image.src : image, width: 1200, height: 630, fit: 'cover', format: 'jpg' });
 const shareUrl = new URL(share.src, Astro.site).href;
 const logoUrl = new URL(truck.src, Astro.site).href;
 

@@ -56,6 +56,7 @@ const towns = business.serviceArea.join(' and ');
           src={heroPhoto}
           alt="Rooftop deck by Stansky Construction, with a new picket railing, a hanging egg chair and potted plants"
           formats={['avif', 'webp']}
+                fallbackFormat="jpg"
           widths={[480, 720, 960, 1280]}
           sizes="(min-width: 60rem) 50vw, 100vw"
           loading="eager"
@@ -80,8 +81,12 @@ const towns = business.serviceArea.join(' and ');
               {s.data.cover ? (
                 <Picture
                   src={s.data.cover.src}
+                  width={s.data.cover.width}
+                  height={s.data.cover.height}
+                  style={`object-position: ${s.data.cover.position}`}
                   alt=""
                   formats={['avif', 'webp']}
+                fallbackFormat="jpg"
                   widths={[400, 640, 900]}
                   sizes="(min-width: 48rem) 50vw, 100vw"
                   class="service__img"
@@ -113,8 +118,12 @@ const towns = business.serviceArea.join(' and ');
             <figure>
               <Picture
                 src={beforeAfter.data.before.src}
+                width={beforeAfter.data.before.width}
+                height={beforeAfter.data.before.height}
+                style={`object-position: ${beforeAfter.data.before.position}`}
                 alt={beforeAfter.data.before.alt}
                 formats={['avif', 'webp']}
+                fallbackFormat="jpg"
                 widths={[400, 640, 900]}
                 sizes="(min-width: 48rem) 50vw, 100vw"
               />
@@ -123,8 +132,12 @@ const towns = business.serviceArea.join(' and ');
             <figure>
               <Picture
                 src={beforeAfter.data.cover.src}
+                width={beforeAfter.data.cover.width}
+                height={beforeAfter.data.cover.height}
+                style={`object-position: ${beforeAfter.data.cover.position}`}
                 alt={beforeAfter.data.cover.alt}
                 formats={['avif', 'webp']}
+                fallbackFormat="jpg"
                 widths={[400, 640, 900]}
                 sizes="(min-width: 48rem) 50vw, 100vw"
               />
