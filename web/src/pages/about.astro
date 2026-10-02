@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import EstimateCta from '../components/EstimateCta.astro';
+import { business } from '../data/business';
+import { breadcrumbSchema, orgId } from '../lib/schema';
+import truck from '../assets/brand/truck.svg';
+
+const site = Astro.site!.href.replace(/\/$/, '');
+// Copy adapted from Jack's current About page. TODO(Jack): a real photo of Jack on a job.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: business.owner,
+  jobTitle: 'Owner and builder',
+  worksFor: { '@id': orgId },
+  url: `${site}/about/`,
+};
+---
+
+<Base
+  title="About Jack Stansky | Stansky Construction, Winston-Salem"
+  description="Jack Stansky started as a carpentry apprentice and now runs Stansky Construction, a remodeling company in Winston-Salem, NC."
+  schema={[
+    person,
+    breadcrumbSchema([
+      { name: 'Home', url: `${site}/` },
+      { name: 'About', url: `${site}/about/` },
+    ]),
+  ]}
+>
+  <article class="wrap section">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'About', href: '/about/' }]} />
+    <div class="grid">
+      <div class="prose">
+        <h1>Meet Jack</h1>
+        <p class="lede">
+          From a young age, Jack Stansky had a passion for building. He spent hours making forts in
+          the woods with friends, usually with tools borrowed from his parents' shed.
+        </p>
+        <p>
+          The groundwork for Stansky Construction was laid years before the company launched. Jack
+          spent three years as a carpentry apprentice, getting hands-on experience across every part
+          of residential construction. He believes the best results come from understanding every
+          phase of a project, and that background still shapes how he works.
+        </p>
+        <p>
+          What keeps him in the trade is the problem-solving. Jack takes pride in helping clients
+          bring their ideas to life, and he approaches every job with care and precision.
+        </p>
+        <p>Outside of work, Jack enjoys running, woodworking and time at the beach.</p>
+
+        <h2>How we work</h2>
+        <ul>
+          <li>Based in {business.city}, working in {business.serviceArea.join(', ')}</li>
+          <li>Kitchens, bathrooms, decks and porches, and ADUs</li>
+          {business.licenseNumber && <li>NC general contractor license #{business.licenseNumber}</li>}
+          {business.insured && <li>Fully insured</li>}
+        </ul>
+      </div>
+      <figure class="art">
+        <Image src={truck} alt="Stansky Construction's logo: Jack's green pickup truck with a springer spaniel sitting beside it" width={480} />
+      </figure>
+    </div>
+  </article>
+  <EstimateCta />
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+  h1 {
+    font-size: var(--step-3);
+  }
+  .lede {
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+  .art {
+    margin: 0;
+  }
+  @media (min-width: 60rem) {
+    .grid {
+      grid-template-columns: 3fr 2fr;
+    }
+    .art {
+      position: sticky;
+      top: var(--space-l);
+    }
+  }
+</style>

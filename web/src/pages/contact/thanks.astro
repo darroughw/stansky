@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import { business, telHref } from '../../data/business';
+---
+
+<Base title="Request sent | Stansky Construction" description="Your estimate request was sent." noindex>
+  <div class="wrap section">
+    <h1>Request sent</h1>
+    <p>
+      Thanks. Jack will get back to you soon to set up a time to see your project.
+      {business.phone && <>If it's urgent, call <a href={telHref(business.phone)}>{business.phone}</a>.</>}
+    </p>
+    <p><a href="/portfolio/">Browse our work</a> while you wait.</p>
+  </div>
+</Base>

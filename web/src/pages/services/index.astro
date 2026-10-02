@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import EstimateCta from '../../components/EstimateCta.astro';
+import { business } from '../../data/business';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const site = Astro.site!.href.replace(/\/$/, '');
+---
+
+<Base
+  title="Remodeling Services in Winston-Salem, NC | Stansky Construction"
+  description={`Kitchen and bathroom remodeling, decks and porches, and ADUs in ${business.serviceArea.join(', ')}, NC, from Stansky Construction.`}
+  schema={[
+    breadcrumbSchema([
+      { name: 'Home', url: `${site}/` },
+      { name: 'Services', url: `${site}/services/` },
+    ]),
+  ]}
+>
+  <div class="wrap section">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services', href: '/services/' }]} />
+    <h1>Services</h1>
+    <p class="intro">
+      Stansky Construction takes on four kinds of work in {business.serviceArea.join(' and ')}. Pick
+      one to see photos, what's included and how the job runs.
+    </p>
+
+    <ul class="list" role="list">
+      {
+        services.map((s) => (
+          <li class="row">
+            {s.data.cover && (
+              <Picture
+                src={s.data.cover.src}
+                alt=""
+                formats={['avif', 'webp']}
+                widths={[320, 640]}
+                sizes="(min-width: 48rem) 20rem, 100vw"
+                class="row__img"
+              />
+            )}
+            <div>
+              <h2 class="row__title">
+                <a href={`/services/${s.id}/`}>{s.data.title}</a>
+              </h2>
+              <p>{s.data.summary}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <EstimateCta />
+</Base>
+
+<style>
+  .intro {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-l) 0 0;
+    max-width: none;
+  }
+  .row {
+    display: grid;
+    gap: var(--space-m);
+    align-items: center;
+    padding-block: var(--space-m);
+    border-top: 1px solid var(--rule);
+  }
+  .row__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .row__title {
+    font-size: var(--step-2);
+  }
+  .row__title a {
+    color: var(--ink);
+  }
+  .row p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  @media (min-width: 48rem) {
+    .row {
+      grid-template-columns: 20rem 1fr;
+    }
+    .row > div:only-child {
+      grid-column: 2;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import { Picture } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  headingLevel?: 'h2' | 'h3';
+}
+const { project, headingLevel: Heading = 'h3' } = Astro.props;
+const { title, summary, neighborhood, location, cover, status } = project.data;
+const place = [neighborhood, location].filter(Boolean).join(', ');
+---
+
+<article class="card">
+  <Picture
+    src={cover.src}
+    alt={cover.alt}
+    formats={['avif', 'webp']}
+    widths={[400, 640, 960]}
+    sizes="(min-width: 60rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+    class="card__img"
+  />
+  <div class="card__body">
+    {
+      (place || status === 'in-progress') && (
+        <p class="label card__meta">
+          {[place, status === 'in-progress' && 'In progress'].filter(Boolean).join(' · ')}
+        </p>
+      )
+    }
+    <Heading class="card__title">
+      <a href={`/portfolio/${project.id}/`}>{title}</a>
+    </Heading>
+    <p>{summary}</p>
+  </div>
+</article>
+
+<style>
+  /* Whole card is clickable via the title link's stretched ::after; only one tab stop. */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card__img {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    object-fit: cover;
+  }
+  .card__body {
+    padding: var(--space-m);
+  }
+  .card__meta {
+    margin-bottom: var(--space-xs);
+  }
+  .card__title {
+    font-size: var(--step-1);
+  }
+  .card__title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .card:hover .card__title a {
+    text-decoration: underline;
+    text-decoration-color: var(--sage);
+    text-decoration-thickness: 3px;
+  }
+  .card:has(a:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+  .card__title a:focus-visible {
+    outline: none;
+  }
+  .card__body p:last-child {
+    margin-bottom: 0;
+    color: var(--ink-soft);
+  }
+</style>

@@ -1,0 +1,214 @@
+/*
+  Stansky Construction design tokens.
+  Palette is pulled from the client's truck illustration:
+  paint (sage), shadow (cab), ink linework, and the paper it's drawn on.
+  Type is one variable family (Archivo) used at three widths:
+  extended for display (echoes the wordmark), normal for reading, condensed for labels.
+*/
+@import '@fontsource-variable/archivo/wdth.css';
+
+:root {
+  --paper: #f5f6f1;
+  --paper-deep: #e9ece3;
+  --ink: #171a16;
+  --ink-soft: #4a5047; /* 8.2:1 on paper */
+  --sage: #6c9a66; /* truck paint: fills and large graphics only, never body text */
+  --cab: #2f5a2c; /* truck shadow: buttons and links, 7.6:1 with white */
+  --cab-hover: #234521;
+  --rule: #d3d8cc;
+  --focus: #1f4fd6;
+
+  --font: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
+  --step-0: clamp(1.06rem, 1.02rem + 0.2vw, 1.15rem);
+  --step-1: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2.1rem);
+  --step-3: clamp(1.9rem, 1.5rem + 1.9vw, 3.2rem);
+  --step-4: clamp(2.3rem, 1.6rem + 3.4vw, 4.6rem);
+
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --space-xl: clamp(3rem, 2rem + 4vw, 6rem);
+
+  --measure: 64ch;
+  --wrap: 72rem;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --radius: 4px;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-stretch: 100%;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--space-s);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+/* Display voice: the wordmark's extended grotesk. Reserved for h1/h2. */
+.display,
+h1,
+h2 {
+  font-stretch: 125%;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+h1 {
+  font-size: var(--step-4);
+}
+h2 {
+  font-size: var(--step-3);
+}
+h3 {
+  font-size: var(--step-1);
+  font-weight: 700;
+  font-stretch: 112%;
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 var(--space-s);
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--cab);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+a:hover {
+  color: var(--cab-hover);
+  text-decoration-thickness: 0.14em;
+}
+
+/* Visible, consistent focus everywhere (the GoDaddy site removed it on 23 elements). */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Condensed utility voice: eyebrows, locations, metadata. */
+.label {
+  font-stretch: 75%;
+  font-weight: 650;
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--wrap));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--space-xl);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 48px;
+  padding: 0.7em 1.3em;
+  border: 2px solid var(--cab);
+  border-radius: var(--radius);
+  background: var(--cab);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-stretch: 110%;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.button:hover {
+  background: var(--cab-hover);
+  border-color: var(--cab-hover);
+  color: #fff;
+}
+.button--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.button--ghost:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.prose h2 {
+  font-size: var(--step-2);
+  margin-top: var(--space-l);
+}
+.prose ul {
+  padding-left: 1.2em;
+}
+.prose li + li {
+  margin-top: 0.3em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

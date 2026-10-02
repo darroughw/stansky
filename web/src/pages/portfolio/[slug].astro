@@ -1,0 +1,117 @@
+---
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import EstimateCta from '../../components/EstimateCta.astro';
+import { breadcrumbSchema } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+const d = project.data;
+const service = d.service ? await getEntry(d.service) : undefined;
+
+const place = [d.neighborhood, d.location].filter(Boolean).join(', ');
+const metaTitle = `${d.title}${place ? ` in ${place}` : ''} | Stansky Construction`;
+const site = Astro.site!.href.replace(/\/$/, '');
+const url = `${site}/portfolio/${project.id}/`;
+type Photo = { src: ImageMetadata; alt: string; caption?: string };
+const photos: Photo[] = [...(d.before ? [{ ...d.before, caption: 'Before' }] : []), { ...d.cover, caption: d.before ? 'After' : undefined }, ...d.gallery];
+---
+
+<Base
+  title={metaTitle}
+  description={d.summary}
+  image={d.cover.src}
+  imageAlt={d.cover.alt}
+  type="article"
+  schema={[
+    breadcrumbSchema([
+      { name: 'Home', url: `${site}/` },
+      { name: 'Our work', url: `${site}/portfolio/` },
+      { name: d.title, url },
+    ]),
+  ]}
+>
+  <article class="wrap section">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', href: '/' },
+        { name: 'Our work', href: '/portfolio/' },
+        { name: d.title, href: `/portfolio/${project.id}/` },
+      ]}
+    />
+    <header class="head">
+      {place && <p class="label">{place}{d.status === 'in-progress' && ' · In progress'}</p>}
+      <h1>{d.title}</h1>
+      <p class="summary">{d.summary}</p>
+    </header>
+
+    <div class="photos">
+      {
+        photos.map((photo, i) => (
+          <figure>
+            <Picture
+              src={photo.src}
+              alt={photo.alt}
+              formats={['avif', 'webp']}
+              widths={[480, 800, 1200, 1600]}
+              sizes="(min-width: 72rem) 36rem, (min-width: 48rem) 50vw, 100vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+            />
+            {photo.caption && <figcaption class="label">{photo.caption}</figcaption>}
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="prose body">
+      <Content />
+      {
+        service && (
+          <p>
+            See more about our <a href={`/services/${service.id}/`}>{service.data.shortTitle.toLowerCase()} work</a>.
+          </p>
+        )
+      }
+    </div>
+  </article>
+  <EstimateCta />
+</Base>
+
+<style>
+  .head h1 {
+    font-size: var(--step-3);
+  }
+  .summary {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .photos {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    margin-block: var(--space-l);
+  }
+  .photos figure {
+    margin: 0;
+  }
+  .photos :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+  .photos figcaption {
+    margin-top: var(--space-xs);
+    color: var(--ink);
+  }
+</style>

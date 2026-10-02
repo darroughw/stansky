@@ -1,0 +1,155 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { business, telHref } from '../data/business';
+import truck from '../assets/brand/truck.svg';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const year = new Date().getFullYear();
+const profiles = [
+  { label: 'Instagram', href: business.social.instagram },
+  { label: 'Google reviews', href: business.social.google },
+  { label: 'Angi', href: business.social.angi },
+  { label: 'HomeAdvisor', href: business.social.homeAdvisor },
+].filter((p) => p.href);
+---
+
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div class="footer__brand">
+      <Image src={truck} alt="" width={240} class="footer__truck" loading="lazy" />
+      <p class="footer__name">{business.name}</p>
+      <p>Remodeling and carpentry by {business.owner}, based in {business.city}, {business.region}.</p>
+      <blockquote class="footer__verse">
+        <p>“{business.verse.text}”</p>
+        <cite>{business.verse.cite}</cite>
+      </blockquote>
+    </div>
+
+    <div>
+      <h2 class="footer__heading label">Contact</h2>
+      <ul class="footer__list">
+        {business.phone && <li><a href={telHref(business.phone)}>{business.phone}</a></li>}
+        {business.email && <li><a href={`mailto:${business.email}`}>{business.email}</a></li>}
+        <li><a href="/contact/">Request an estimate</a></li>
+      </ul>
+      {business.hours && <p>{business.hours}</p>}
+    </div>
+
+    <div>
+      <h2 class="footer__heading label">Service area</h2>
+      <ul class="footer__list">
+        {business.serviceArea.map((town) => <li>{town}, {business.region}</li>)}
+      </ul>
+    </div>
+
+    <nav aria-label="Services">
+      <h2 class="footer__heading label">Services</h2>
+      <ul class="footer__list">
+        {services.map((s) => <li><a href={`/services/${s.id}/`}>{s.data.shortTitle}</a></li>)}
+      </ul>
+    </nav>
+
+    {
+      profiles.length > 0 && (
+        <div>
+          <h2 class="footer__heading label">Find us on</h2>
+          <ul class="footer__list">
+            {profiles.map((p) => (
+              <li><a href={p.href} rel="me noopener">{p.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+  <div class="wrap footer__legal">
+    <p>
+      © {year} {business.legalName || business.name}
+      {business.licenseNumber && <> · NC General Contractor License #{business.licenseNumber}</>}
+      {business.insured && <> · Licensed &amp; insured</>}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-xl);
+    background: var(--paper-deep);
+    border-top: 1px solid var(--rule);
+    padding-block: var(--space-xl) var(--space-m);
+  }
+  .footer a {
+    color: var(--ink);
+  }
+  .footer a:hover {
+    color: var(--cab);
+  }
+  .footer__grid {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+  .footer__brand {
+    grid-column: 1 / -1;
+    max-width: 34rem;
+  }
+  .footer__truck {
+    width: 10rem;
+    margin-bottom: var(--space-s);
+  }
+  .footer__name {
+    font-stretch: 125%;
+    font-weight: 850;
+    text-transform: uppercase;
+    font-size: var(--step-1);
+    margin-bottom: var(--space-xs);
+  }
+  .footer__heading {
+    color: var(--ink-soft);
+    margin-bottom: var(--space-xs);
+    font-size: var(--step--1);
+  }
+  .footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer__list li {
+    padding-block: 0.25rem;
+  }
+  .footer__verse {
+    margin: var(--space-m) 0 0;
+    padding-left: var(--space-s);
+    border-left: 3px solid var(--sage);
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .footer__verse p {
+    margin-bottom: 0.25rem;
+  }
+  .footer__verse cite {
+    font-style: normal;
+    font-size: var(--step--1);
+  }
+  .footer__legal {
+    margin-top: var(--space-l);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .footer__legal p {
+    max-width: none;
+    margin: 0;
+  }
+
+  @media (min-width: 60rem) {
+    .footer__grid {
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+    }
+    .footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+import Wordmark from './Wordmark.astro';
+import { business, telHref } from '../data/business';
+
+const links = [
+  { href: '/services/', label: 'Services' },
+  { href: '/portfolio/', label: 'Our work' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="header">
+  <div class="wrap header__inner">
+    <a class="header__home" href="/" aria-label={`${business.name}, home`}>
+      <Wordmark class="header__mark" decorative />
+    </a>
+    <nav class="header__nav" aria-label="Main">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {
+      business.phone ? (
+        <a class="button header__call" href={telHref(business.phone)}>
+          Call <span class="header__phone">{business.phone}</span>
+        </a>
+      ) : (
+        <a class="button header__call" href="/contact/">
+          Get an estimate
+        </a>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .header {
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-m);
+    padding-block: var(--space-s);
+  }
+  .header__home {
+    color: var(--ink);
+    display: block;
+    margin-right: auto;
+  }
+  .header__home {
+    width: clamp(8.5rem, 7rem + 5vw, 11rem);
+  }
+  /* The svg lives in Wordmark.astro, outside this component's style scope. */
+  .header__home :global(svg) {
+    width: 100%;
+  }
+  .header__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .header__nav a {
+    display: inline-block;
+    padding-block: 0.6rem;
+    color: var(--ink);
+    font-stretch: 85%;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: var(--step--1);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+  }
+  .header__nav a:hover {
+    border-bottom-color: var(--sage);
+  }
+  .header__nav a[aria-current='page'] {
+    border-bottom-color: var(--cab);
+  }
+  .header__call {
+    min-height: 44px;
+    padding: 0.5em 1em;
+    font-size: var(--step--1);
+  }
+
+  /* Narrow screens: wordmark + call on top, nav as its own row. */
+  @media (max-width: 47.99rem) {
+    .header__nav {
+      order: 3;
+      flex-basis: 100%;
+    }
+    .header__nav ul {
+      justify-content: space-between;
+      gap: 0 var(--space-s);
+    }
+    .header__phone {
+      display: none;
+    }
+  }
+</style>

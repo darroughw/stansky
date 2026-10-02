@@ -1,0 +1,180 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { business, telHref } from '../data/business';
+import { breadcrumbSchema } from '../lib/schema';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const site = Astro.site!.href.replace(/\/$/, '');
+
+// Static site: the form posts to a form service (Formspree, Web3Forms, Basin...) set in .env.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+if (!endpoint) console.warn('[stansky] PUBLIC_FORM_ENDPOINT is not set; the contact form has nowhere to send.');
+---
+
+<Base
+  title="Request an Estimate | Stansky Construction, Winston-Salem"
+  description={`Request a remodeling estimate from Stansky Construction in ${business.serviceArea.join(' and ')}, NC.`}
+  schema={[
+    breadcrumbSchema([
+      { name: 'Home', url: `${site}/` },
+      { name: 'Contact', url: `${site}/contact/` },
+    ]),
+  ]}
+>
+  <div class="wrap section grid">
+    <div>
+      <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact/' }]} />
+      <h1>Request an estimate</h1>
+      <p class="lede">
+        Tell Jack a little about your project. He'll get back to you to set up a time to come see it.
+      </p>
+      <dl class="direct">
+        {
+          business.phone && (
+            <>
+              <dt class="label">Phone</dt>
+              <dd><a href={telHref(business.phone)}>{business.phone}</a></dd>
+            </>
+          )
+        }
+        {
+          business.email && (
+            <>
+              <dt class="label">Email</dt>
+              <dd><a href={`mailto:${business.email}`}>{business.email}</a></dd>
+            </>
+          )
+        }
+        <dt class="label">Service area</dt>
+        <dd>{business.serviceArea.map((t) => `${t}, ${business.region}`).join(' · ')}</dd>
+      </dl>
+    </div>
+
+    <form class="form" method="POST" action={endpoint ?? '#'}>
+      <p class="form__note">All fields are required unless marked optional.</p>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="phone">Phone <span class="optional">(optional)</span></label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label for="town">Town</label>
+        <input id="town" name="town" type="text" autocomplete="address-level2" required aria-describedby="town-hint" />
+        <p class="hint" id="town-hint">So Jack knows it's in his area, e.g. Clemmons</p>
+      </div>
+      <div class="field">
+        <label for="project">Type of project</label>
+        <select id="project" name="project" required>
+          <option value="">Choose one</option>
+          {services.map((s) => <option>{s.data.shortTitle}</option>)}
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">Tell us about it</label>
+        <textarea id="message" name="message" rows="6" required aria-describedby="message-hint"></textarea>
+        <p class="hint" id="message-hint">What you'd like done, and roughly when.</p>
+      </div>
+
+      <!-- Spam trap: hidden from people and assistive tech, bots fill it in. -->
+      <div class="trap" aria-hidden="true">
+        <label for="company">Leave this empty</label>
+        <input id="company" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="_next" value={new URL('/contact/thanks/', Astro.site).href} />
+
+      <button class="button" type="submit">Send request</button>
+    </form>
+  </div>
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    gap: var(--space-l);
+  }
+  h1 {
+    font-size: var(--step-3);
+  }
+  .lede {
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .direct {
+    margin: var(--space-l) 0 0;
+  }
+  .direct dt {
+    margin-top: var(--space-s);
+  }
+  .direct dd {
+    margin: 0;
+    font-size: var(--step-1);
+  }
+
+  .form {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: var(--space-l) var(--space-m);
+  }
+  .form__note {
+    color: var(--ink-soft);
+    font-size: var(--step--1);
+  }
+  .field {
+    margin-bottom: var(--space-m);
+  }
+  .field label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    color: var(--ink);
+    background: #fff;
+    border: 2px solid #767c72; /* 4.5:1 against white for non-text contrast */
+    border-radius: var(--radius);
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--focus);
+    outline-offset: 1px;
+  }
+  .hint {
+    margin: 0.35rem 0 0;
+    font-size: var(--step--1);
+    color: var(--ink-soft);
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+  }
+
+  @media (min-width: 60rem) {
+    .grid {
+      grid-template-columns: 1fr 1.2fr;
+      align-items: start;
+    }
+  }
+</style>

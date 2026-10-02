@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+
+# Original client files (large videos/HEIC/AI). Web-ready copies live in web/src/assets.
+clientAssets/
+
+# Claude Code notes (local only)
+CLAUDE.md

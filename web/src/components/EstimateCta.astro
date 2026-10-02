@@ -1,0 +1,77 @@
+---
+import { business, telHref } from '../data/business';
+
+interface Props {
+  heading?: string;
+}
+const { heading = 'Planning a project?' } = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-heading">
+  <div class="wrap cta__inner">
+    <div>
+      <h2 id="cta-heading" class="cta__heading">{heading}</h2>
+      <p>
+        Tell Jack what you have in mind. He'll come take a look and give you a written estimate.
+      </p>
+    </div>
+    <div class="cta__actions">
+      <a class="button cta__primary" href="/contact/">Request an estimate</a>
+      {
+        business.phone && (
+          <a class="button button--ghost cta__ghost" href={telHref(business.phone)}>
+            Call {business.phone}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    background: var(--cab);
+    color: #fff;
+    padding-block: var(--space-l);
+  }
+  .cta__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+  .cta__heading {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-xs);
+  }
+  .cta p {
+    margin: 0;
+  }
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+  }
+  .cta__primary {
+    background: var(--paper);
+    border-color: var(--paper);
+    color: var(--ink);
+  }
+  .cta__primary:hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--ink);
+  }
+  .cta__ghost {
+    color: #fff;
+    border-color: #fff;
+  }
+  .cta__ghost:hover {
+    background: #fff;
+    color: var(--cab);
+  }
+  .cta :focus-visible {
+    outline-color: #fff;
+  }
+</style>

@@ -1,0 +1,367 @@
+---
+import { getCollection } from 'astro:content';
+import { Picture, Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import EstimateCta from '../components/EstimateCta.astro';
+import { business, telHref } from '../data/business';
+import heroPhoto from '../assets/projects/rooftop-deck-railing.jpg';
+import truck from '../assets/brand/truck.svg';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((p) => p.data.featured && !p.data.before).slice(0, 3);
+const beforeAfter = projects.find((p) => p.data.before);
+const reviews = await getCollection('reviews');
+
+const towns = business.serviceArea.join(' and ');
+// TODO(Jack): confirm the hero and "Meet Jack" claims (he does the estimate himself and works on site).
+---
+
+<Base
+  title="Kitchen, Bath & Deck Remodeling in Winston-Salem, NC | Stansky Construction"
+  description={`Jack Stansky remodels kitchens and bathrooms and builds decks, porches and ADUs in ${towns}, NC. Request a written estimate.`}
+  image={heroPhoto}
+  imageAlt="Rooftop deck built by Stansky Construction"
+>
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="label">{business.name} · {business.city}, {business.region}</p>
+        <h1 id="hero-heading">
+          <span class="hero__lead">Kitchens, baths, decks &amp; ADUs</span>
+          <span class="hero__where">Remodeling in Winston&#8209;Salem, NC</span>
+        </h1>
+        <p class="hero__intro">
+          Jack Stansky is a carpenter who runs his own jobs. When you hire Stansky Construction, the
+          person you meet for the estimate is the person building your project.
+        </p>
+        <div class="hero__actions">
+          <a class="button" href="/contact/">Request an estimate</a>
+          {
+            business.phone ? (
+              <a class="button button--ghost" href={telHref(business.phone)}>
+                Call {business.phone}
+              </a>
+            ) : (
+              <a class="button button--ghost" href="/portfolio/">
+                See our work
+              </a>
+            )
+          }
+        </div>
+      </div>
+      <figure class="hero__photo">
+        <Picture
+          src={heroPhoto}
+          alt="Rooftop deck by Stansky Construction, with a new picket railing, a hanging egg chair and potted plants"
+          formats={['avif', 'webp']}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 60rem) 50vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+    <div class="ground" aria-hidden="true">
+      <div class="wrap">
+        <Image src={truck} alt="" class="ground__truck" width={420} loading="eager" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="services-heading">
+    <div class="wrap">
+      <h2 id="services-heading">What we build</h2>
+      <ul class="services" role="list">
+        {
+          services.map((s) => (
+            <li class="service">
+              {s.data.cover ? (
+                <Picture
+                  src={s.data.cover.src}
+                  alt=""
+                  formats={['avif', 'webp']}
+                  widths={[400, 640, 900]}
+                  sizes="(min-width: 48rem) 50vw, 100vw"
+                  class="service__img"
+                />
+              ) : (
+                <div class="service__img service__img--empty" aria-hidden="true">
+                  <span>{s.data.shortTitle}</span>
+                </div>
+              )}
+              <h3>
+                <a href={`/services/${s.id}/`}>{s.data.shortTitle}</a>
+              </h3>
+              <p>{s.data.summary}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    beforeAfter?.data.before && (
+      <section class="section ba" aria-labelledby="ba-heading">
+        <div class="wrap">
+          <p class="label">Before &amp; after</p>
+          <h2 id="ba-heading">{beforeAfter.data.title}</h2>
+          <p>{beforeAfter.data.summary}</p>
+          <div class="ba__pair">
+            <figure>
+              <Picture
+                src={beforeAfter.data.before.src}
+                alt={beforeAfter.data.before.alt}
+                formats={['avif', 'webp']}
+                widths={[400, 640, 900]}
+                sizes="(min-width: 48rem) 50vw, 100vw"
+              />
+              <figcaption class="label">Before</figcaption>
+            </figure>
+            <figure>
+              <Picture
+                src={beforeAfter.data.cover.src}
+                alt={beforeAfter.data.cover.alt}
+                formats={['avif', 'webp']}
+                widths={[400, 640, 900]}
+                sizes="(min-width: 48rem) 50vw, 100vw"
+              />
+              <figcaption class="label">After</figcaption>
+            </figure>
+          </div>
+          <p>
+            <a href={`/portfolio/${beforeAfter.id}/`}>More about the {beforeAfter.data.title.toLowerCase()}</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="work-heading">
+    <div class="wrap">
+      <h2 id="work-heading">Recent work</h2>
+      <div class="grid">
+        {featured.map((p) => <ProjectCard project={p} />)}
+      </div>
+      <p class="more"><a href="/portfolio/">See all {projects.length} projects</a></p>
+    </div>
+  </section>
+
+  {
+    reviews.length > 0 && (
+      <section class="section" aria-labelledby="reviews-heading">
+        <div class="wrap">
+          <h2 id="reviews-heading">What clients say</h2>
+          <div class="grid">
+            {reviews.map((r) => (
+              <figure class="review">
+                <blockquote>
+                  <p>{r.data.text}</p>
+                </blockquote>
+                <figcaption class="label">{r.data.author}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section about" aria-labelledby="about-heading">
+    <div class="wrap about__inner">
+      <h2 id="about-heading">Meet Jack</h2>
+      <div>
+        <p>
+          Jack Stansky has been building since he was a kid making forts in the woods with tools
+          borrowed from his parents' shed. Before starting Stansky Construction he spent three years
+          as a carpentry apprentice, working across every phase of residential construction.
+        </p>
+        <p>
+          That background is why he still works on site. He believes the best results come from
+          understanding every part of a project, from the first plan to the final walkthrough.
+        </p>
+        <p><a href="/about/">More about Jack</a></p>
+      </div>
+    </div>
+  </section>
+
+  <EstimateCta />
+</Base>
+
+<style>
+  .hero {
+    padding-top: var(--space-l);
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+  .hero h1 {
+    margin-bottom: var(--space-m);
+  }
+  .hero__lead {
+    display: block;
+  }
+  .hero__where {
+    display: block;
+    margin-top: 0.35em;
+    font-size: var(--step-1);
+    font-stretch: 100%;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--cab);
+  }
+  .hero__intro {
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    margin-top: var(--space-m);
+  }
+  .hero__photo {
+    margin: 0;
+  }
+  .hero__photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  /* Signature: Jack's truck parked on a ground line that closes the hero. */
+  .ground {
+    margin-top: calc(var(--space-l) * -0.25);
+    border-bottom: 3px solid var(--ink);
+  }
+  .ground__truck {
+    width: clamp(13rem, 9rem + 16vw, 24rem);
+    margin-left: auto;
+    /* the illustration's own wheel line sits ~4% above its bottom edge */
+    margin-bottom: -1.2%;
+  }
+
+  .services {
+    display: grid;
+    gap: var(--space-l) var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    list-style: none;
+    padding: 0;
+    margin: var(--space-l) 0 0;
+    max-width: none;
+  }
+  .service {
+    position: relative;
+  }
+  .service__img {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-bottom: var(--space-s);
+  }
+  .service__img--empty {
+    display: grid;
+    place-items: center;
+    background: var(--sage);
+    color: var(--ink);
+  }
+  .service__img--empty span {
+    font-stretch: 125%;
+    font-weight: 850;
+    font-size: var(--step-3);
+    text-transform: uppercase;
+  }
+  .service h3 {
+    margin-bottom: var(--space-xs);
+  }
+  .service h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .service h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .service:hover h3 a {
+    text-decoration: underline;
+    text-decoration-color: var(--sage);
+    text-decoration-thickness: 3px;
+  }
+  .service:has(a:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 6px;
+    border-radius: var(--radius);
+  }
+  .service h3 a:focus-visible {
+    outline: none;
+  }
+  .service p {
+    color: var(--ink-soft);
+  }
+
+  .ba {
+    background: var(--paper-deep);
+  }
+  .ba__pair {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    margin-block: var(--space-l) var(--space-m);
+  }
+  .ba__pair figure {
+    margin: 0;
+  }
+  .ba__pair :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .ba__pair figcaption {
+    margin-top: var(--space-xs);
+    color: var(--ink);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    margin-top: var(--space-l);
+  }
+  .more {
+    margin-top: var(--space-m);
+  }
+  .review {
+    margin: 0;
+    padding: var(--space-m);
+    background: #fff;
+    border-left: 4px solid var(--sage);
+  }
+  .review blockquote {
+    margin: 0 0 var(--space-s);
+  }
+
+  .about__inner {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  @media (min-width: 60rem) {
+    .hero__grid {
+      grid-template-columns: 1.1fr 1fr;
+    }
+    .about__inner {
+      grid-template-columns: 1fr 2fr;
+    }
+  }
+</style>
