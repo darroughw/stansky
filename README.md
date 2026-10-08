@@ -27,7 +27,7 @@ Nothing goes live until you click **Publish**. After that the site rebuilds itse
 1. Content is edited in **Sanity** (project `983tg09r`, dataset `production`).
 2. Publishing fires a Sanity webhook at a **Netlify** build hook.
 3. Netlify builds the **Astro** site in `web/`, pulling content and photos from Sanity.
-4. Astro writes plain HTML with no client-side JavaScript. Photos are resized and converted to AVIF and WebP at build time.
+4. Astro writes plain HTML with no client-side JavaScript, apart from the analytics below once they're switched on. Photos are resized and converted to AVIF and WebP at build time.
 
 Pushing to `main` also deploys.
 
@@ -68,6 +68,34 @@ netlify.toml                build settings, caching and security headers
 clientAssets/               Jack's original photos and logo files (not in git)
 ```
 
+## Analytics and ad tracking
+
+Off until an ID is set in Netlify (**Site configuration > Environment variables**), then live on the next production deploy. Deploy previews and local builds never load trackers.
+
+| Variable | What it turns on |
+|---|---|
+| `PUBLIC_POSTHOG_KEY` | PostHog: visitors, funnels, session replay (project API key, `phc_...`) |
+| `PUBLIC_POSTHOG_HOST` | Only if the PostHog project is in the EU: `https://eu.i.posthog.com` |
+| `PUBLIC_META_PIXEL_ID` | Meta (Facebook/Instagram) pixel |
+| `PUBLIC_NEXTDOOR_PIXEL_ID` | Nextdoor pixel |
+| `PUBLIC_GOOGLE_ADS_ID` | Google Ads tag (`AW-...`) |
+| `PUBLIC_GOOGLE_ADS_LEAD_LABEL` | Google Ads conversion label for an estimate request |
+| `PUBLIC_GOOGLE_ADS_CALL_LABEL` | Google Ads conversion label for a phone tap |
+
+Events (`web/src/lib/track.ts`), sent to every tracker that's on:
+
+| Event | PostHog | Meta | Nextdoor | Google Ads |
+|---|---|---|---|---|
+| Page view | `$pageview` | `PageView` | `PAGE_VIEW` | page view |
+| First touch on the estimate form | `estimate_form_started` | | | |
+| Estimate request sent | `estimate_submitted` | `Lead` | `LEAD` | lead conversion |
+| Phone number tapped | `phone_clicked` | `Contact` | | call conversion |
+| Email tapped | `email_clicked` | `Contact` | | |
+
+The PostHog funnel to build is **`$pageview` → `$pageview` on `/contact/` → `estimate_form_started` → `estimate_submitted`**, broken down by `utm_source` or `utm_campaign`. No name, email, phone or message is ever sent to a tracker.
+
+Every estimate request also carries a **`lead_source`** field, such as `facebook / paid, campaign: kitchens-fall, ad: video1, landed on /services/`, so Jack can see in the email which ad or site sent it. Tag every ad link with `utm_source`, `utm_medium=paid`, `utm_campaign` and `utm_content`.
+
 ## Decisions worth knowing
 
 - **No invented facts.** Prices, timelines, license details and reviews come from Jack. Anything missing is hidden on the site, listed as a warning at build time, or marked as a placeholder.
@@ -86,6 +114,7 @@ clientAssets/               Jack's original photos and logo files (not in git)
 - [ ] Jack invited to Sanity as an Editor
 - [ ] Domain added in Netlify and DNS updated at GoDaddy
 - [ ] `SITE_LIVE=true` set in Netlify, then redeploy
+- [ ] Before running ads: tracker IDs set in Netlify, a privacy policy page that names the pixels (Meta's terms require one), and a test lead checked in each ad platform's events tool
 - [ ] Google Business Profile claimed and matching the site's name, phone and service area
 
 ## Credits

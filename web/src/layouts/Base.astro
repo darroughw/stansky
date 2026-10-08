@@ -3,6 +3,7 @@ import '../styles/global.css';
 import fontUrl from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
 import { business } from '../data/business';
 import { businessSchema } from '../lib/schema';
 import { warnMissingBusinessInfo } from '../lib/checks';
@@ -74,6 +75,7 @@ const jsonLd = [businessSchema({ logo: logoUrl, image: new URL(ogPath('/'), Astr
     <meta name="twitter:image:alt" content={shareAlt} />
 
     {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+    <Analytics />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

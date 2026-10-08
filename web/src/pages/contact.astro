@@ -54,6 +54,8 @@ const site = Astro.site!.href.replace(/\/$/, '');
 
     <form class="form" name="estimate" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="estimate" />
+      <!-- Filled in by src/lib/track.ts when analytics is on: which ad or site sent this request. -->
+      <input type="hidden" name="lead_source" value="" />
       <p class="form__note">All fields are required unless marked optional.</p>
 
       <div class="field">
