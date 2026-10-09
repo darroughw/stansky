@@ -7,8 +7,7 @@ import { business, telHref } from '../../data/business';
   <div class="wrap section">
     <h1>Request sent</h1>
     <p>
-      Thank you for contacting Stansky Construction. Jack will be in touch soon to schedule a visit.
-      {business.phone && <>If it's urgent, call <a href={telHref(business.phone)}>{business.phone}</a>.</>}
+      Thank you for contacting Stansky Construction. Jack will be in touch soon to schedule a visit. {business.phone && <>If it's urgent, call <a href={telHref(business.phone)}>{business.phone}</a>.</>}
     </p>
     <p><a href="/portfolio/">Browse our work</a> while you wait.</p>
   </div>

@@ -22,6 +22,22 @@ describe('telHref', () => {
   });
 });
 
+describe('listJoin', () => {
+  it('joins towns the way the site writes lists', async () => {
+    const { listJoin } = await import('../../src/data/business');
+    expect(listJoin(['Winston-Salem', 'Clemmons', 'Advance'])).toBe('Winston-Salem, Clemmons and Advance');
+    expect(listJoin(['Winston-Salem', 'Clemmons'])).toBe('Winston-Salem and Clemmons');
+    expect(listJoin(['Winston-Salem'])).toBe('Winston-Salem');
+    expect(listJoin([])).toBe('');
+  });
+
+  it('builds the service area phrase from Business info', async () => {
+    sanityDoc.current = { serviceArea: ['Winston-Salem', 'Clemmons', 'Advance', 'Lewisville', 'Kernersville'] };
+    const { serviceAreaText } = await import('../../src/data/business');
+    expect(serviceAreaText).toBe('Winston-Salem, Clemmons, Advance, Lewisville and Kernersville');
+  });
+});
+
 describe('business defaults', () => {
   it('falls back to safe defaults when Business info is empty', async () => {
     const { business, sameAs } = await import('../../src/data/business');

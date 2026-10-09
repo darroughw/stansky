@@ -4,7 +4,7 @@ import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
-import { business } from '../../data/business';
+import { business, serviceAreaText } from '../../data/business';
 import { breadcrumbSchema } from '../../lib/schema';
 import { capsHtml } from '../../lib/caps';
 
@@ -26,9 +26,8 @@ const site = Astro.site!.href.replace(/\/$/, '');
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services', href: '/services/' }]} />
     <h1>Our services</h1>
     <p class="intro">
-      Stansky Construction offers remodeling, repair and outdoor construction in
-      {business.serviceArea.join(' and ')}. Select a service to see project photos, what's included
-      and how the process works.
+      Stansky Construction offers remodeling, repair and outdoor construction in {serviceAreaText}.
+      Select a service to see project photos, what's included and how the process works.
     </p>
 
     <ul class="list" role="list">

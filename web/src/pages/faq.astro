@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import FaqList from '../components/FaqList.astro';
 import EstimateCta from '../components/EstimateCta.astro';
-import { business } from '../data/business';
+import { business, serviceAreaText } from '../data/business';
 import { breadcrumbSchema, faqSchema } from '../lib/schema';
 import { capsHtml } from '../lib/caps';
 
@@ -33,7 +33,7 @@ const empty = faqs.length === 0;
 
 <Base
   title="Remodeling Questions & Answers | Stansky Construction, Winston-Salem"
-  description={`Answers to common questions about remodeling, decks and ADUs in ${business.serviceArea.join(' and ')}, NC: cost, timelines, permits and estimates.`}
+  description={`Answers to common questions about remodeling, decks and ADUs in ${serviceAreaText}, NC: cost, timelines, permits and estimates.`}
   schema={schema}
   noindex={empty}
 >

@@ -5,7 +5,7 @@ import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import EstimateCta from '../components/EstimateCta.astro';
 import FaqList from '../components/FaqList.astro';
-import { business, telHref } from '../data/business';
+import { business, serviceAreaText, telHref } from '../data/business';
 import { capsHtml } from '../lib/caps';
 import heroPhoto from '../assets/projects/jack-with-truck.jpg';
 import truck from '../assets/brand/truck.svg';
@@ -24,7 +24,7 @@ const beforeAfter = projects.find((p) => p.data.before);
 const reviews = await getCollection('reviews');
 const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((a, b) => a.data.order - b.data.order).slice(0, 4);
 
-const towns = business.serviceArea.join(' and ');
+const towns = serviceAreaText;
 // TODO(Jack): confirm the hero and "About" claims (he does the estimate himself and works on site).
 ---
 

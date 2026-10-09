@@ -53,6 +53,13 @@ export const business = {
   },
 };
 
+/** "A, B and C": the site's list style (no serial comma). */
+export const listJoin = (items: string[]) =>
+  items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : (items[0] ?? '');
+
+/** Service area towns as a phrase, e.g. "Winston-Salem, Clemmons and Advance". */
+export const serviceAreaText = listJoin(business.serviceArea);
+
 export const telHref = (phone: string) => `tel:+1${phone.replace(/\D/g, '').replace(/^1/, '')}`;
 
 export const sameAs = Object.values(business.social).filter(Boolean);
