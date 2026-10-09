@@ -21,10 +21,10 @@ export const getStaticPaths = (async () => {
   const cards: Record<string, Card> = {
     home: {
       eyebrow: `Remodeling · ${where}`,
-      title: 'Kitchens, baths, decks & ADUs',
+      title: 'Custom building & remodeling',
       photo: kitchen,
     },
-    services: { eyebrow: `Services · ${where}`, title: 'What we build', photo: deck },
+    services: { eyebrow: `Services · ${where}`, title: 'Our services', photo: deck },
     portfolio: { eyebrow: `Our work · ${where}`, title: 'Real projects, real photos', photo: porch },
     about: { eyebrow: business.name, title: `Meet ${business.owner.split(' ')[0]}`, photo: porch },
     contact: { eyebrow: business.name, title: 'Request an estimate' },

@@ -4,7 +4,7 @@ import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
-import { business, serviceAreaText } from '../../data/business';
+import { serviceAreaText } from '../../data/business';
 import { breadcrumbSchema } from '../../lib/schema';
 import { capsHtml } from '../../lib/caps';
 
@@ -14,7 +14,7 @@ const site = Astro.site!.href.replace(/\/$/, '');
 
 <Base
   title="Remodeling Services in Winston-Salem, NC | Stansky Construction"
-  description={`Kitchen and bathroom remodeling, decks and porches, and ADUs in ${business.serviceArea.join(', ')}, NC, from Stansky Construction.`}
+  description="Kitchen and bathroom remodeling, decks and porches, structural repair and home remodels in Winston-Salem and nearby towns, from Stansky Construction."
   schema={[
     breadcrumbSchema([
       { name: 'Home', url: `${site}/` },

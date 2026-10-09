@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { business, serviceAreaText, telHref } from '../data/business';
+import { business, telHref } from '../data/business';
 import { breadcrumbSchema } from '../lib/schema';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -15,7 +15,7 @@ const site = Astro.site!.href.replace(/\/$/, '');
 
 <Base
   title="Request an Estimate | Stansky Construction, Winston-Salem"
-  description={`Request a remodeling estimate from Stansky Construction in ${serviceAreaText}, NC.`}
+  description="Request a written estimate from Stansky Construction for remodeling, decks and porches or structural repair in Winston-Salem and nearby towns."
   schema={[
     breadcrumbSchema([
       { name: 'Home', url: `${site}/` },

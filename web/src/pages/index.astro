@@ -5,7 +5,7 @@ import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import EstimateCta from '../components/EstimateCta.astro';
 import FaqList from '../components/FaqList.astro';
-import { business, serviceAreaText, telHref } from '../data/business';
+import { business, telHref } from '../data/business';
 import { capsHtml } from '../lib/caps';
 import heroPhoto from '../assets/projects/jack-with-truck.jpg';
 import truck from '../assets/brand/truck.svg';
@@ -24,13 +24,12 @@ const beforeAfter = projects.find((p) => p.data.before);
 const reviews = await getCollection('reviews');
 const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((a, b) => a.data.order - b.data.order).slice(0, 4);
 
-const towns = serviceAreaText;
 // TODO(Jack): confirm the hero and "About" claims (he does the estimate himself and works on site).
 ---
 
 <Base
-  title="Kitchen, Bath & Deck Remodeling in Winston-Salem, NC | Stansky Construction"
-  description={`Jack Stansky remodels kitchens and bathrooms and builds decks, porches and ADUs in ${towns}, NC. Request a written estimate.`}
+  title="Custom Building & Remodeling in Winston-Salem, NC | Stansky Construction"
+  description="Stansky Construction remodels kitchens and bathrooms, builds decks and porches, and does structural repair in Winston-Salem, NC. Request a written estimate."
   bodyBackground="repeating-linear-gradient(7deg, transparent 0 118px, rgba(23,26,22,0.035) 118px 120px)"
 >
   <section class="hero" aria-labelledby="hero-heading">
