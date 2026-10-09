@@ -41,6 +41,8 @@ npm install
 npm run dev        # site at http://localhost:4321
 npm run build      # production build in web/dist
 npx astro check    # type check
+npm test           # unit tests (Vitest)
+npm run test:a11y  # WCAG 2.1 AA check of every built page in Chrome; run after a build
 
 cd ../studio
 npm install
