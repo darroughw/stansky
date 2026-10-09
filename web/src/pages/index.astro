@@ -31,6 +31,7 @@ const towns = business.serviceArea.join(' and ');
 <Base
   title="Kitchen, Bath & Deck Remodeling in Winston-Salem, NC | Stansky Construction"
   description={`Jack Stansky remodels kitchens and bathrooms and builds decks, porches and ADUs in ${towns}, NC. Request a written estimate.`}
+  bodyBackground="repeating-linear-gradient(7deg, transparent 0 118px, rgba(23,26,22,0.035) 118px 120px)"
 >
   <section class="hero" aria-labelledby="hero-heading">
     <div class="hero__backdrop" aria-hidden="true"></div>
@@ -238,7 +239,7 @@ const towns = business.serviceArea.join(' and ');
     --wood: #5b3a1e;
     --wood-deep: #3c2512;
     --font-script: 'Caveat Variable', 'Caveat', cursive;
-    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.45' numOctaves='2' seed='6' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2000' height='2000'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.45' numOctaves='2' seed='6' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='2000' height='2000' filter='url(%23n)'/%3E%3C/svg%3E");
     position: relative;
     padding-top: var(--space-l);
     overflow: hidden;
@@ -261,9 +262,9 @@ const towns = business.serviceArea.join(' and ');
     position: absolute;
     inset: 0;
     background-image: var(--grain);
-    background-size: 300px 300px;
+    background-size: 2000px 2000px;
     mix-blend-mode: soft-light;
-    opacity: 0.8;
+    opacity: 0.9;
   }
   .hero__grid {
     position: relative;
@@ -409,7 +410,22 @@ const towns = business.serviceArea.join(' and ');
   }
 
   .ba {
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2000' height='2000'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.45' numOctaves='2' seed='6' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='2000' height='2000' filter='url(%23n)'/%3E%3C/svg%3E");
+    position: relative;
     background: var(--paper-deep);
+  }
+  .ba::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 2000px 2000px;
+    mix-blend-mode: multiply;
+    opacity: 0.12;
+  }
+  .ba .wrap {
+    position: relative;
+    z-index: 1;
   }
   .ba__pair {
     display: grid;
@@ -442,8 +458,22 @@ const towns = business.serviceArea.join(' and ');
   }
   .reviews-wood {
     --font-script: 'Caveat Variable', 'Caveat', cursive;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2000' height='2000'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.45' numOctaves='2' seed='6' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='2000' height='2000' filter='url(%23n)'/%3E%3C/svg%3E");
     position: relative;
     background: var(--paper-deep);
+  }
+  .reviews-wood::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 2000px 2000px;
+    mix-blend-mode: multiply;
+    opacity: 0.1;
+  }
+  .reviews-wood .wrap {
+    position: relative;
+    z-index: 1;
   }
   .reviews-wood__heading {
     text-align: center;

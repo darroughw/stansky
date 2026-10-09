@@ -18,6 +18,8 @@ interface Props {
   /** Extra JSON-LD objects for this page. */
   schema?: object[];
   noindex?: boolean;
+  /** CSS `background-image` value (e.g. a repeating-linear-gradient) for a page-specific body texture. */
+  bodyBackground?: string;
 }
 
 const {
@@ -26,6 +28,7 @@ const {
   type = 'website',
   schema = [],
   noindex = false,
+  bodyBackground,
 } = Astro.props;
 
 warnMissingBusinessInfo();
@@ -77,7 +80,7 @@ const jsonLd = [businessSchema({ logo: logoUrl, image: new URL(ogPath('/'), Astr
     {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
     <Analytics />
   </head>
-  <body>
+  <body style={bodyBackground ? `background-image:${bodyBackground}` : undefined}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main" tabindex="-1">
