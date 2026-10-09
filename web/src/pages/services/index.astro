@@ -24,10 +24,11 @@ const site = Astro.site!.href.replace(/\/$/, '');
 >
   <div class="wrap section">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services', href: '/services/' }]} />
-    <h1>Services</h1>
+    <h1>Our services</h1>
     <p class="intro">
-      Stansky Construction takes on four kinds of work in {business.serviceArea.join(' and ')}. Pick
-      one to see photos, what's included and how the job runs.
+      Stansky Construction offers remodeling, repair and outdoor construction in
+      {business.serviceArea.join(' and ')}. Select a service to see project photos, what's included
+      and how the process works.
     </p>
 
     <ul class="list" role="list">

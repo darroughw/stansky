@@ -4,7 +4,7 @@ import { business, telHref } from '../data/business';
 interface Props {
   heading?: string;
 }
-const { heading = 'Planning a project?' } = Astro.props;
+const { heading = 'Start your project today' } = Astro.props;
 ---
 
 <section class="cta" aria-labelledby="cta-heading">
@@ -12,7 +12,8 @@ const { heading = 'Planning a project?' } = Astro.props;
     <div>
       <h2 id="cta-heading" class="cta__heading">{heading}</h2>
       <p>
-        Tell Jack what you have in mind. He'll come take a look and give you a written estimate.
+        Contact us to schedule a walkthrough. Jack will visit your home, talk through your plans and
+        provide a written estimate.
       </p>
     </div>
     <div class="cta__actions">

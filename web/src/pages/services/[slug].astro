@@ -101,14 +101,14 @@ if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
     {
       faqs.length > 0 && (
         <section class="wrap section" aria-labelledby="faq-heading">
-          <h2 id="faq-heading">Common questions</h2>
+          <h2 id="faq-heading">Frequently asked questions</h2>
           <FaqList faqs={faqs} />
           <p class="faq-more"><a href="/faq/">All questions &amp; answers</a></p>
         </section>
       )
     }
   </article>
-  <EstimateCta heading={`Thinking about ${d.shortTitle.toLowerCase()}?`} />
+  <EstimateCta heading="Ready to get started?" />
 </Base>
 
 <style>

@@ -7,8 +7,15 @@ import EstimateCta from '../components/EstimateCta.astro';
 import FaqList from '../components/FaqList.astro';
 import { business, telHref } from '../data/business';
 import { capsHtml } from '../lib/caps';
-import heroPhoto from '../assets/projects/rooftop-deck-railing.jpg';
+import heroPhoto from '../assets/projects/jack-with-truck.jpg';
 import truck from '../assets/brand/truck.svg';
+
+// Homepage-only type voices (hero, "what we build" and "what clients say" below).
+// Scoped to this page via Vite's per-page CSS so the rest of the site keeps the
+// one-family Archivo system described in global.css.
+import '@fontsource-variable/caveat';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -18,7 +25,7 @@ const reviews = await getCollection('reviews');
 const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((a, b) => a.data.order - b.data.order).slice(0, 4);
 
 const towns = business.serviceArea.join(' and ');
-// TODO(Jack): confirm the hero and "Meet Jack" claims (he does the estimate himself and works on site).
+// TODO(Jack): confirm the hero and "About" claims (he does the estimate himself and works on site).
 ---
 
 <Base
@@ -26,6 +33,7 @@ const towns = business.serviceArea.join(' and ');
   description={`Jack Stansky remodels kitchens and bathrooms and builds decks, porches and ADUs in ${towns}, NC. Request a written estimate.`}
 >
   <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero__backdrop" aria-hidden="true"></div>
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <p class="label">{business.name} · {business.city}, {business.region}</p>
@@ -34,8 +42,9 @@ const towns = business.serviceArea.join(' and ');
           <span class="hero__where">Remodeling in Winston&#8209;Salem, NC</span>
         </h1>
         <p class="hero__intro">
-          Jack Stansky is a carpenter who runs his own jobs. When you hire Stansky Construction, the
-          person you meet for the estimate is the person building your project.
+          Stansky Construction is a locally owned remodeling and carpentry company. Owner Jack
+          Stansky works on every project himself, from the first walkthrough to the final details,
+          so the work is done right and built to last.
         </p>
         <div class="hero__actions">
           <a class="button" href="/contact/">Request an estimate</a>
@@ -53,9 +62,10 @@ const towns = business.serviceArea.join(' and ');
         </div>
       </div>
       <figure class="hero__photo">
+        <span class="hero__tape" aria-hidden="true"></span>
         <Picture
           src={heroPhoto}
-          alt="Rooftop deck by Stansky Construction, with a new picket railing, a hanging egg chair and potted plants"
+          alt="Jack Stansky in a Stansky Construction polo, leaning on his pickup truck in a driveway"
           formats={['avif', 'webp']}
                 fallbackFormat="jpg"
           widths={[480, 720, 960, 1280]}
@@ -72,9 +82,10 @@ const towns = business.serviceArea.join(' and ');
     </div>
   </section>
 
-  <section class="section" aria-labelledby="services-heading">
+  <section class="section services-wood" aria-labelledby="services-heading">
     <div class="wrap">
-      <h2 id="services-heading">What we build</h2>
+      <p class="label">Services</p>
+      <h2 id="services-heading">Explore our services</h2>
       <ul class="services" role="list">
         {
           services.map((s) => (
@@ -88,8 +99,8 @@ const towns = business.serviceArea.join(' and ');
                   alt=""
                   formats={['avif', 'webp']}
                 fallbackFormat="jpg"
-                  widths={[400, 640, 900]}
-                  sizes="(min-width: 48rem) 50vw, 100vw"
+                  widths={[160, 240]}
+                  sizes="7rem"
                   class="service__img"
                 />
               ) : (
@@ -97,10 +108,12 @@ const towns = business.serviceArea.join(' and ');
                   <span set:html={capsHtml(s.data.shortTitle)} />
                 </div>
               )}
-              <h3>
-                <a href={`/services/${s.id}/`}>{s.data.shortTitle}</a>
-              </h3>
-              <p>{s.data.summary}</p>
+              <div class="service__body">
+                <h3>
+                  <a href={`/services/${s.id}/`}>{s.data.shortTitle}</a>
+                </h3>
+                <p>{s.data.summary}</p>
+              </div>
             </li>
           ))
         }
@@ -155,7 +168,7 @@ const towns = business.serviceArea.join(' and ');
 
   <section class="section" aria-labelledby="work-heading">
     <div class="wrap">
-      <h2 id="work-heading">Recent work</h2>
+      <h2 id="work-heading">Our recent projects</h2>
       <div class="grid">
         {featured.map((p) => <ProjectCard project={p} />)}
       </div>
@@ -165,16 +178,17 @@ const towns = business.serviceArea.join(' and ');
 
   {
     reviews.length > 0 && (
-      <section class="section" aria-labelledby="reviews-heading">
+      <section class="section reviews-wood" aria-labelledby="reviews-heading">
         <div class="wrap">
-          <h2 id="reviews-heading">What clients say</h2>
-          <div class="grid">
-            {reviews.map((r) => (
-              <figure class="review">
+          <h2 id="reviews-heading" class="reviews-wood__heading">What our clients say</h2>
+          <div class="grid reviews-wood__grid">
+            {reviews.map((r, i) => (
+              <figure class={`review-note ${i % 2 === 1 ? 'review-note--alt' : ''}`}>
+                <span class="review-note__tape" aria-hidden="true" />
                 <blockquote>
                   <p>{r.data.text}</p>
                 </blockquote>
-                <figcaption class="label">{r.data.author}</figcaption>
+                <figcaption class="review-note__sign">{r.data.author}</figcaption>
               </figure>
             ))}
           </div>
@@ -187,7 +201,7 @@ const towns = business.serviceArea.join(' and ');
     generalFaqs.length > 0 && (
       <section class="section" aria-labelledby="faq-heading">
         <div class="wrap">
-          <h2 id="faq-heading">Common questions</h2>
+          <h2 id="faq-heading">Frequently asked questions</h2>
           <FaqList faqs={generalFaqs} />
           <p class="more"><a href="/faq/">All questions &amp; answers</a></p>
         </div>
@@ -197,7 +211,10 @@ const towns = business.serviceArea.join(' and ');
 
   <section class="section about" aria-labelledby="about-heading">
     <div class="wrap about__inner">
-      <h2 id="about-heading">Meet Jack</h2>
+      <div>
+        <p class="label">About us</p>
+        <h2 id="about-heading">Jack Stansky</h2>
+      </div>
       <div>
         <p>
           Jack Stansky has been building since he was a kid making forts in the woods with tools
@@ -205,8 +222,8 @@ const towns = business.serviceArea.join(' and ');
           as a carpentry apprentice, working across every phase of residential construction.
         </p>
         <p>
-          That background is why he still works on site. He believes the best results come from
-          understanding every part of a project, from the first plan to the final walkthrough.
+          That experience is why he still works on site. He believes quality results come
+          from understanding every part of a project, from the first plan to the final walkthrough.
         </p>
         <p><a href="/about/">More about Jack</a></p>
       </div>
@@ -218,10 +235,38 @@ const towns = business.serviceArea.join(' and ');
 
 <style>
   .hero {
+    --wood: #5b3a1e;
+    --wood-deep: #3c2512;
+    --font-script: 'Caveat Variable', 'Caveat', cursive;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.45' numOctaves='2' seed='6' result='t'/%3E%3CfeColorMatrix in='t' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+    position: relative;
     padding-top: var(--space-l);
     overflow: hidden;
   }
+  .hero__backdrop {
+    /* Sits behind the photo column, which only exists from 60rem up (see media query
+       below) — below that the grid stacks to one column and this would cut across
+       the copy instead, so it's off by default. */
+    display: none;
+    position: absolute;
+    right: -4%;
+    top: -8%;
+    width: 48%;
+    height: 125%;
+    background: var(--wood);
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .hero__backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 300px 300px;
+    mix-blend-mode: soft-light;
+    opacity: 0.8;
+  }
   .hero__grid {
+    position: relative;
     display: grid;
     gap: var(--space-l);
     align-items: center;
@@ -254,13 +299,31 @@ const towns = business.serviceArea.join(' and ');
     margin-top: var(--space-m);
   }
   .hero__photo {
+    position: relative;
     margin: 0;
+    padding: 0.9rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    transform: rotate(1.1deg);
+    box-shadow: 8px 10px 0 rgba(23, 26, 22, 0.08);
+  }
+  .hero__tape {
+    position: absolute;
+    width: 5.5rem;
+    height: 1.75rem;
+    background: rgba(108, 154, 102, 0.55); /* --sage at 55%; relative-color() not safe to rely on yet */
+    top: -0.9rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   }
   .hero__photo :global(img) {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    border-radius: var(--radius);
+    object-position: 70% 50%; /* keep Jack, who stands right of center, in the 4:3 crop */
+    border-radius: 1px;
   }
 
   /* Signature: Jack's truck parked on a ground line that closes the hero. */
@@ -276,23 +339,28 @@ const towns = business.serviceArea.join(' and ');
   }
 
   .services {
-    display: grid;
-    gap: var(--space-l) var(--space-m);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    display: flex;
+    flex-direction: column;
     list-style: none;
     padding: 0;
     margin: var(--space-l) 0 0;
     max-width: none;
+    border-top: 1px dashed var(--rule);
   }
   .service {
     position: relative;
+    display: flex;
+    gap: var(--space-m);
+    align-items: flex-start;
+    padding-block: var(--space-m);
+    border-bottom: 1px dashed var(--rule);
   }
   .service__img {
-    aspect-ratio: 4 / 3;
-    width: 100%;
+    flex: none;
+    width: 6rem;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: var(--radius);
-    margin-bottom: var(--space-s);
   }
   .service__img--empty {
     display: grid;
@@ -303,10 +371,14 @@ const towns = business.serviceArea.join(' and ');
   .service__img--empty span {
     font-stretch: 125%;
     font-weight: 850;
-    font-size: var(--step-3);
+    font-size: var(--step-0);
     text-transform: uppercase;
   }
+  .service__body {
+    min-width: 0;
+  }
   .service h3 {
+    font-size: var(--step-1);
     margin-bottom: var(--space-xs);
   }
   .service h3 a {
@@ -333,6 +405,7 @@ const towns = business.serviceArea.join(' and ');
   }
   .service p {
     color: var(--ink-soft);
+    margin: 0;
   }
 
   .ba {
@@ -367,14 +440,49 @@ const towns = business.serviceArea.join(' and ');
   .more {
     margin-top: var(--space-m);
   }
-  .review {
-    margin: 0;
-    padding: var(--space-m);
-    background: #fff;
-    border-left: 4px solid var(--sage);
+  .reviews-wood {
+    --font-script: 'Caveat Variable', 'Caveat', cursive;
+    position: relative;
+    background: var(--paper-deep);
   }
-  .review blockquote {
+  .reviews-wood__heading {
+    text-align: center;
+  }
+  .reviews-wood__grid.grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    max-width: 50rem;
+    margin-inline: auto;
+    gap: var(--space-l) var(--space-xl);
+  }
+  .review-note {
+    position: relative;
+    margin: 0;
+    padding: var(--space-m) var(--space-m) var(--space-s);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    transform: rotate(-0.8deg);
+    box-shadow: 5px 6px 0 rgba(23, 26, 22, 0.07);
+  }
+  .review-note--alt {
+    transform: rotate(0.9deg);
+  }
+  .review-note__tape {
+    position: absolute;
+    width: 4.5rem;
+    height: 1.5rem;
+    background: rgba(91, 58, 30, 0.18);
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+  }
+  .review-note blockquote {
     margin: 0 0 var(--space-s);
+  }
+  .review-note__sign {
+    font-family: var(--font-script);
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--cab);
   }
 
   .about__inner {
@@ -385,6 +493,9 @@ const towns = business.serviceArea.join(' and ');
   @media (min-width: 60rem) {
     .hero__grid {
       grid-template-columns: 1.1fr 1fr;
+    }
+    .hero__backdrop {
+      display: block;
     }
     .about__inner {
       grid-template-columns: 1fr 2fr;
