@@ -39,7 +39,7 @@ const towns = business.serviceArea.join(' and ');
       <div class="hero__copy">
         <p class="label">{business.name} · {business.city}, {business.region}</p>
         <h1 id="hero-heading">
-          <span class="hero__lead">Custom carpentry and remodeling</span>
+          <span class="hero__lead">Custom building&nbsp;&amp; remodeling</span>
           <span class="hero__where">in Winston&#8209;Salem, NC</span>
         </h1>
         <p class="hero__intro">
@@ -275,8 +275,14 @@ const towns = business.serviceArea.join(' and ');
   .hero h1 {
     margin-bottom: var(--space-m);
   }
+  .hero__copy {
+    container-type: inline-size;
+  }
   .hero__lead {
     display: block;
+    /* "REMODELING" is the longest line (~8.9em; "BUILDING &" is held together by the &nbsp;),
+       so cap the size to the column: every line always fits and the & never sits alone. */
+    font-size: min(var(--step-4), 10.9cqi);
   }
   .hero__where {
     display: block;
