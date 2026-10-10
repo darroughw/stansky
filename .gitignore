@@ -11,3 +11,7 @@ clientAssets/
 
 # Claude Code notes (local only)
 CLAUDE.md
+
+# Local tool state: PostHog setup wizard, Netlify CLI link
+.posthog/
+.netlify/
