@@ -184,6 +184,13 @@ describe('contact link taps', () => {
     expect(trackers.gtag).toHaveBeenCalledWith('event', 'conversion', { send_to: 'AW-999/calllbl' });
   });
 
+  it('names the phone contact bar as the placement', async () => {
+    visit('/services/kitchen-remodeling/', { html: '<nav data-placement="contact-bar"><a href="tel:+13363995500">Call</a></nav>' });
+    await loadTracker();
+    tap(document.querySelector('a')!);
+    expect(trackers.posthog).toHaveBeenCalledWith('phone_clicked', { page: '/services/kitchen-remodeling/', placement: 'contact-bar' });
+  });
+
   it('reports email taps without a Google Ads call conversion', async () => {
     vi.stubEnv('PUBLIC_GOOGLE_ADS_ID', 'AW-999');
     vi.stubEnv('PUBLIC_GOOGLE_ADS_CALL_LABEL', 'calllbl');

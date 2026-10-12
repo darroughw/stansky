@@ -150,7 +150,8 @@ function watchContactLinks() {
     const link = (event.target as Element | null)?.closest?.('a[href^="tel:"], a[href^="mailto:"]');
     if (!link) return;
     const isPhone = link.getAttribute('href')!.startsWith('tel:');
-    const where = { page: location.pathname, placement: link.closest('header, footer, section, main')?.tagName.toLowerCase() };
+    const area = link.closest<HTMLElement>('[data-placement], header, footer, section, main');
+    const where = { page: location.pathname, placement: area?.dataset.placement ?? area?.tagName.toLowerCase() };
 
     window.posthog?.capture(isPhone ? 'phone_clicked' : 'email_clicked', where);
     window.fbq?.('track', 'Contact');

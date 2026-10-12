@@ -60,6 +60,7 @@ if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
         <div>
           <h1 set:html={capsHtml(d.title)} />
           <p class="intro__summary">{d.summary}</p>
+          <p class="intro__action"><a class="button" href="/contact/">Request an estimate</a></p>
           <p class="label">Serving {business.serviceArea.join(', ')}, {business.region}</p>
         </div>
         {
@@ -126,6 +127,15 @@ if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
   .intro__summary {
     font-size: var(--step-1);
     color: var(--ink-soft);
+  }
+  .intro__action {
+    margin-block: var(--space-m);
+  }
+  /* Phones get the same action in the fixed contact bar (ContactBar.astro). */
+  @media (max-width: 47.99rem) {
+    .intro__action {
+      display: none;
+    }
   }
   .intro__img {
     width: 100%;

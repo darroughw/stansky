@@ -1,0 +1,53 @@
+---
+// Phones only: call and estimate buttons that stay within thumb reach on every page,
+// so a visitor reading a service or project page never has to scroll to the bottom
+// (or back to the top) to get in touch. Left off the contact pages, where the form is.
+import { business, telHref } from '../data/business';
+---
+
+<nav class="contact-bar" aria-label="Contact" data-placement="contact-bar">
+  {
+    business.phone && (
+      <a class="button button--ghost contact-bar__call" href={telHref(business.phone)}>
+        Call
+      </a>
+    )
+  }
+  <a class="button contact-bar__estimate" href="/contact/">Get an estimate</a>
+</nav>
+
+<style>
+  .contact-bar {
+    display: none;
+  }
+  @media (max-width: 47.99rem) {
+    .contact-bar {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 50;
+      display: flex;
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--gutter) calc(var(--space-xs) + env(safe-area-inset-bottom));
+      background: var(--paper);
+      border-top: 1px solid var(--rule);
+      box-shadow: 0 -4px 12px rgba(23, 26, 22, 0.08);
+    }
+    .contact-bar .button {
+      justify-content: center;
+      padding-inline: 0.75em;
+      white-space: nowrap;
+    }
+    .contact-bar__call {
+      flex: 1;
+      background: #fff;
+    }
+    .contact-bar__estimate {
+      flex: 2;
+    }
+  }
+  @media print {
+    .contact-bar {
+      display: none;
+    }
+  }
+</style>

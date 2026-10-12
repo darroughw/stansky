@@ -5,6 +5,7 @@ import fontUrl from '@fontsource-variable/archivo/files/archivo-latin-wdth-norma
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
+import ContactBar from '../components/ContactBar.astro';
 import { business } from '../data/business';
 import { businessSchema } from '../lib/schema';
 import { warnMissingBusinessInfo } from '../lib/checks';
@@ -33,6 +34,9 @@ const {
 } = Astro.props;
 
 warnMissingBusinessInfo();
+
+// The phone contact bar would only duplicate the form on the contact pages.
+const showContactBar = !Astro.url.pathname.startsWith('/contact');
 
 // Launch switch: until SITE_LIVE=true is set (in Netlify, once the real domain points here),
 // every page is noindex so the *.netlify.app copy can't compete with the live GoDaddy site.
@@ -85,13 +89,14 @@ const jsonLd = [businessSchema({ logo: logoUrl, image: new URL(ogPath('/'), Astr
     {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
     <Analytics />
   </head>
-  <body style={bodyBackground ? `background-image:${bodyBackground}` : undefined}>
+  <body class:list={{ 'has-contact-bar': showContactBar }} style={bodyBackground ? `background-image:${bodyBackground}` : undefined}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer />
+    {showContactBar && <ContactBar />}
   </body>
 </html>
 
@@ -112,5 +117,14 @@ const jsonLd = [businessSchema({ logo: logoUrl, image: new URL(ogPath('/'), Astr
   }
   main:focus {
     outline: none;
+  }
+  /* Leave room for the fixed phone contact bar so it never covers the footer or a focused link. */
+  @media (max-width: 47.99rem) {
+    :global(html:has(.has-contact-bar)) {
+      scroll-padding-bottom: 5rem;
+    }
+    .has-contact-bar {
+      padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    }
   }
 </style>
