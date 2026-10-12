@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
-import { breadcrumbSchema } from '../../lib/schema';
+import { breadcrumbSchema, projectListSchema } from '../../lib/schema';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const site = Astro.site!.href.replace(/\/$/, '');
@@ -14,6 +14,7 @@ const site = Astro.site!.href.replace(/\/$/, '');
   title="Remodeling Portfolio | Stansky Construction, Winston-Salem"
   description="Kitchens, bathrooms, porches, decks and structural repairs by Stansky Construction in and around Winston-Salem, NC. Real projects, real photos."
   schema={[
+    projectListSchema(projects.map((p) => ({ name: p.data.title, url: `${site}/portfolio/${p.id}/` }))),
     breadcrumbSchema([
       { name: 'Home', url: `${site}/` },
       { name: 'Our work', url: `${site}/portfolio/` },

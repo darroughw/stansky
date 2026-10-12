@@ -11,6 +11,9 @@ const site =
 export default defineConfig({
   site,
   trailingSlash: 'always',
+  // Pages are small and visitors usually land on just one (often from an ad), so put the
+  // CSS in the page itself instead of making the first paint wait on extra requests.
+  build: { inlineStylesheets: 'always' },
   integrations: [sitemap({ filter: (page) => !page.includes('/contact/thanks/') })],
   image: {
     responsiveStyles: true,

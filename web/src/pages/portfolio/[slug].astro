@@ -5,7 +5,7 @@ import type { Photo as SanityPhoto } from '../../lib/sanity';
 import Base from '../../layouts/Base.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
-import { breadcrumbSchema } from '../../lib/schema';
+import { breadcrumbSchema, projectSchema } from '../../lib/schema';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -33,6 +33,14 @@ const photos: Photo[] = [...(d.before ? [{ ...d.before, caption: 'Before' }] : [
   description={d.summary}
   type="article"
   schema={[
+    projectSchema({
+      name: d.title,
+      description: d.summary,
+      url,
+      place: place || undefined,
+      service: service && { name: service.data.shortTitle, url: `${site}/services/${service.id}/` },
+      photos,
+    }),
     breadcrumbSchema([
       { name: 'Home', url: `${site}/` },
       { name: 'Our work', url: `${site}/portfolio/` },

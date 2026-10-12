@@ -73,3 +73,65 @@ describe('businessSchema', () => {
     expect(schema.areaServed.map((a) => a.name)).toEqual(['Winston-Salem, NC', 'Clemmons, NC']);
   });
 });
+
+describe('openingHours', () => {
+  it('reads hours the way Jack types them', async () => {
+    const { openingHours } = await import('../../src/lib/schema');
+    expect(openingHours('Mon-Fri 8AM-5PM')).toBe('Mo-Fr 08:00-17:00');
+    expect(openingHours('Mon–Fri 7am–5pm')).toBe('Mo-Fr 07:00-17:00');
+    expect(openingHours('Monday - Saturday 7:30 am - 4:30 pm')).toBe('Mo-Sa 07:30-16:30');
+    expect(openingHours('Mon-Fri 8am-12pm')).toBe('Mo-Fr 08:00-12:00');
+  });
+
+  it('gives up rather than guess at anything else', async () => {
+    const { openingHours } = await import('../../src/lib/schema');
+    for (const text of ['', 'By appointment', 'Mon-Fri 8-5', 'Mon-Fri 8AM-5PM, Sat by appointment', 'Mon-Fri 13PM-5PM']) {
+      expect(openingHours(text), text).toBeUndefined();
+    }
+  });
+
+  it('adds hours and the service list to the business details', async () => {
+    sanityDoc.current = { hours: 'Mon-Fri 8AM-5PM' };
+    const { businessSchema } = await import('../../src/lib/schema');
+    const schema = businessSchema({
+      logo: 'https://example.com/logo.png',
+      services: [{ name: 'Kitchens', url: 'https://stanskyconstruction.com/services/kitchen-remodeling/' }],
+    });
+    expect(schema).toMatchObject({ openingHours: 'Mo-Fr 08:00-17:00' });
+    expect(schema.hasOfferCatalog?.itemListElement[0].itemOffered).toMatchObject({ '@type': 'Service', name: 'Kitchens' });
+  });
+
+  it('leaves hours out when they are not set', async () => {
+    const { businessSchema } = await import('../../src/lib/schema');
+    const schema = businessSchema({ logo: 'https://example.com/logo.png' });
+    expect(schema).not.toHaveProperty('openingHours');
+    expect(schema).not.toHaveProperty('hasOfferCatalog');
+  });
+});
+
+describe('projectSchema', () => {
+  it('describes a project with its place, service and credited photos', async () => {
+    const { projectSchema } = await import('../../src/lib/schema');
+    const schema = projectSchema({
+      name: 'Front Porch Rebuild',
+      description: 'A rebuilt porch.',
+      url: 'https://stanskyconstruction.com/portfolio/front-porch-rebuild/',
+      place: 'Ardmore, Winston-Salem, NC',
+      service: { name: 'Decks & Porches', url: 'https://stanskyconstruction.com/services/decks-and-porches/' },
+      photos: [{ src: 'https://cdn.sanity.io/a.jpg', width: 1200, height: 900, alt: 'New porch floor' }],
+    });
+    expect(schema).toMatchObject({
+      '@type': 'CreativeWork',
+      contentLocation: { name: 'Ardmore, Winston-Salem, NC' },
+      about: { name: 'Decks & Porches' },
+    });
+    expect(schema.image[0]).toMatchObject({ contentUrl: 'https://cdn.sanity.io/a.jpg', caption: 'New porch floor', creditText: 'Stansky Construction' });
+  });
+
+  it('leaves out place and service when a project has none', async () => {
+    const { projectSchema } = await import('../../src/lib/schema');
+    const schema = projectSchema({ name: 'Deck', description: 'A deck.', url: 'https://example.com/', photos: [] });
+    expect(schema).not.toHaveProperty('contentLocation');
+    expect(schema).not.toHaveProperty('about');
+  });
+});

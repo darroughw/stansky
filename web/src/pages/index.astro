@@ -7,15 +7,14 @@ import EstimateCta from '../components/EstimateCta.astro';
 import FaqList from '../components/FaqList.astro';
 import { business, telHref } from '../data/business';
 import { capsHtml } from '../lib/caps';
+import { websiteSchema } from '../lib/schema';
 import heroPhoto from '../assets/projects/jack-with-truck.jpg';
 import truck from '../assets/brand/truck.svg';
 
-// Homepage-only type voices (hero, "what we build" and "what clients say" below).
-// Scoped to this page via Vite's per-page CSS so the rest of the site keeps the
-// one-family Archivo system described in global.css.
+// Homepage-only handwriting face for the review signatures. Scoped to this page via
+// Vite's per-page CSS so the rest of the site keeps the one-family Archivo system
+// described in global.css.
 import '@fontsource-variable/caveat';
-import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/600.css';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -31,6 +30,7 @@ const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((
   title="Custom Building & Remodeling in Winston-Salem, NC | Stansky Construction"
   description="Stansky Construction remodels kitchens and bathrooms, builds decks and porches, and does structural repair in Winston-Salem, NC. Request a written estimate."
   bodyBackground="repeating-linear-gradient(7deg, transparent 0 118px, rgba(23,26,22,0.035) 118px 120px)"
+  schema={[websiteSchema()]}
 >
   <section class="hero" aria-labelledby="hero-heading">
     <div class="hero__backdrop" aria-hidden="true"></div>
