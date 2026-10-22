@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ site }) => {
   const body = [
     `# ${b.name}`,
     '',
-    `> ${b.name} is a residential remodeling company in ${b.city}, ${b.region}, run by ${b.owner}. It remodels kitchens and bathrooms, builds and rebuilds decks, porches and screened porches, and does structural repair and room remodels.`,
+    `> ${b.name} is a ${b.licenseNumber ? 'licensed general' : 'general'} contractor and remodeling company in ${b.city}, ${b.region}, run by ${b.owner}. It remodels kitchens and bathrooms, builds and rebuilds decks, porches and screened porches, and does structural repair and room remodels.`,
     '',
     '## Key facts',
     '',

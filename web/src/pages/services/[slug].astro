@@ -6,8 +6,9 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import EstimateCta from '../../components/EstimateCta.astro';
 import FaqList from '../../components/FaqList.astro';
-import { business } from '../../data/business';
+import { business, serviceAreaText } from '../../data/business';
 import { breadcrumbSchema, serviceSchema, faqSchema } from '../../lib/schema';
+import { serviceTrades, tradeLabel } from '../../lib/trades';
 import { capsHtml } from '../../lib/caps';
 
 export async function getStaticPaths() {
@@ -29,8 +30,9 @@ const faqs = await getCollection('faqs', (f) => f.data.service === service.id);
 
 const site = Astro.site!.href.replace(/\/$/, '');
 const url = `${site}/services/${service.id}/`;
+const trade = serviceTrades[service.id];
 const schema: object[] = [
-  serviceSchema({ name: d.title, description: d.metaDescription, url }),
+  serviceSchema({ name: d.title, description: d.metaDescription, url, serviceType: trade && tradeLabel(trade) }),
   breadcrumbSchema([
     { name: 'Home', url: `${site}/` },
     { name: 'Services', url: `${site}/services/` },
@@ -61,7 +63,13 @@ if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
           <h1 set:html={capsHtml(d.title)} />
           <p class="intro__summary">{d.summary}</p>
           <p class="intro__action"><a class="button" href="/contact/">Request an estimate</a></p>
-          <p class="label">Serving {business.serviceArea.join(', ')}, {business.region}</p>
+          {
+            trade ? (
+              <p class="intro__trade">{business.name} is a {trade} serving {serviceAreaText}, {business.region}.</p>
+            ) : (
+              <p class="label">Serving {business.serviceArea.join(', ')}, {business.region}</p>
+            )
+          }
         </div>
         {
           d.cover && (
@@ -136,6 +144,9 @@ if (confirmed.length) schema.push(faqSchema(confirmed.map((f) => f.data)));
     .intro__action {
       display: none;
     }
+  }
+  .intro__trade {
+    color: var(--ink-soft);
   }
   .intro__img {
     width: 100%;

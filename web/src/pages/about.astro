@@ -21,7 +21,7 @@ const person = {
 
 <Base
   title="About Jack Stansky | Stansky Construction, Winston-Salem"
-  description="Jack Stansky started as a carpentry apprentice and now runs Stansky Construction, a remodeling company in Winston-Salem, NC."
+  description={`Jack Stansky started as a carpentry apprentice and is now a ${business.licenseNumber ? 'licensed general' : 'general'} contractor running Stansky Construction in Winston-Salem, NC.`}
   schema={[
     person,
     breadcrumbSchema([

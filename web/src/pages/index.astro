@@ -28,7 +28,7 @@ const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((
 
 <Base
   title="Custom Building & Remodeling in Winston-Salem, NC | Stansky Construction"
-  description="Stansky Construction remodels kitchens and bathrooms, builds decks and porches, and does structural repair in Winston-Salem, NC. Request a written estimate."
+  description={`${business.licenseNumber ? 'Licensed general' : 'General'} contractor in Winston-Salem, NC. Kitchen and bathroom remodeling, decks and porches, and structural repair. Request a written estimate.`}
   bodyBackground="repeating-linear-gradient(7deg, transparent 0 118px, rgba(23,26,22,0.035) 118px 120px)"
   schema={[websiteSchema()]}
 >
@@ -42,7 +42,7 @@ const generalFaqs = (await getCollection('faqs', (f) => !f.data.service)).sort((
           <span class="hero__where">in Winston&#8209;Salem, NC</span>
         </h1>
         <p class="hero__intro">
-          Stansky Construction is a locally owned remodeling and carpentry company. Owner Jack
+          Stansky Construction is a locally owned{business.licenseNumber ? ', licensed' : ''} general contractor in Winston-Salem. Owner Jack
           Stansky works on every project himself, from the first walkthrough to the final details,
           so the work is done right and built to last.
         </p>

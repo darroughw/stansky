@@ -121,13 +121,14 @@ export function projectListSchema(projects: { name: string; url: string }[]) {
   };
 }
 
-export function serviceSchema(s: { name: string; description: string; url: string }) {
+export function serviceSchema(s: { name: string; description: string; url: string; serviceType?: string }) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: s.name,
     description: s.description,
     url: s.url,
+    ...(s.serviceType ? { serviceType: s.serviceType } : {}),
     provider: { '@id': orgId },
     areaServed: business.serviceArea.map((name) => `${name}, ${business.region}`),
   };

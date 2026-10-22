@@ -135,3 +135,16 @@ describe('projectSchema', () => {
     expect(schema).not.toHaveProperty('about');
   });
 });
+
+describe('serviceSchema', () => {
+  it('names the trade when one is known', async () => {
+    const { serviceSchema } = await import('../../src/lib/schema');
+    const schema = serviceSchema({ name: 'Decks & Porches', description: 'Decks.', url: 'https://example.com/', serviceType: 'Deck and porch builder' });
+    expect(schema).toMatchObject({ '@type': 'Service', serviceType: 'Deck and porch builder' });
+  });
+
+  it('leaves the trade out when there is none', async () => {
+    const { serviceSchema } = await import('../../src/lib/schema');
+    expect(serviceSchema({ name: 'Decks', description: 'Decks.', url: 'https://example.com/' })).not.toHaveProperty('serviceType');
+  });
+});
