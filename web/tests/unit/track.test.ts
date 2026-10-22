@@ -135,7 +135,7 @@ describe('estimate funnel events', () => {
 
     visit('/contact/thanks/');
     await loadTracker();
-    expect(trackers.posthog).toHaveBeenCalledWith('estimate_submitted', { project: 'Kitchens', town: 'Clemmons' });
+    expect(trackers.posthog).toHaveBeenCalledWith('estimate_submitted', { project: 'Kitchens', town: 'Clemmons', photos: 0 });
     expect(trackers.fbq).toHaveBeenCalledWith('track', 'Lead', { content_name: 'Kitchens' });
     expect(trackers.ndp).toHaveBeenCalledWith('track', 'LEAD');
     expect(trackers.gtag).toHaveBeenCalledWith('event', 'conversion', { send_to: 'AW-999/leadlbl' });

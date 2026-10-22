@@ -52,7 +52,7 @@ const site = Astro.site!.href.replace(/\/$/, '');
       </dl>
     </div>
 
-    <form class="form" name="estimate" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field">
+    <form class="form" name="estimate" method="POST" action="/contact/thanks/" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="estimate" />
       <!-- Filled in by src/lib/track.ts when analytics is on: which ad or site sent this request. -->
       <input type="hidden" name="lead_source" value="" />
@@ -88,6 +88,15 @@ const site = Astro.site!.href.replace(/\/$/, '');
         <textarea id="message" name="message" rows="6" required aria-describedby="message-hint"></textarea>
         <p class="hint" id="message-hint">What you'd like done, and roughly when.</p>
       </div>
+      <div class="field">
+        <label for="photos">Photos <span class="optional">(optional)</span></label>
+        <input id="photos" name="photo_1" type="file" accept="image/*" data-photo-picker aria-describedby="photos-hint photos-status" />
+        <p class="hint" id="photos-hint">Up to 3 photos of the space or the problem. They help Jack give a better estimate.</p>
+        <p class="hint photos-status" id="photos-status" data-photo-status aria-live="polite"></p>
+        <!-- Filled by src/lib/photos.ts, which shrinks each photo so the request stays under Netlify's 8 MB limit. -->
+        <input type="file" name="photo_2" accept="image/*" data-photo-slot hidden tabindex="-1" aria-hidden="true" />
+        <input type="file" name="photo_3" accept="image/*" data-photo-slot hidden tabindex="-1" aria-hidden="true" />
+      </div>
 
       <!-- Spam trap: hidden from people and assistive tech, bots fill it in. -->
       <div class="trap" aria-hidden="true">
@@ -97,6 +106,11 @@ const site = Astro.site!.href.replace(/\/$/, '');
 
       <button class="button" type="submit">Send request</button>
     </form>
+    <script>
+      import { enhancePhotoField } from '../lib/photos';
+      const form = document.querySelector<HTMLFormElement>('form[name="estimate"]');
+      if (form) enhancePhotoField(form);
+    </script>
   </div>
 </Base>
 
@@ -167,6 +181,15 @@ const site = Astro.site!.href.replace(/\/$/, '');
     margin: 0.35rem 0 0;
     font-size: var(--step--1);
     color: var(--ink-soft);
+  }
+  input[type='file'] {
+    min-height: 0;
+    padding: 0.5rem;
+    background: var(--paper);
+    border-style: dashed;
+  }
+  .photos-status:empty {
+    display: none;
   }
   .trap {
     position: absolute;

@@ -120,7 +120,11 @@ function watchEstimateForm() {
     store.set(
       'sessionStorage',
       SUBMITTED_KEY,
-      JSON.stringify({ project: data.get('project'), town: data.get('town') }),
+      JSON.stringify({
+        project: data.get('project'),
+        town: data.get('town'),
+        photos: [...data.values()].filter((v) => v instanceof File && v.size > 0).length,
+      }),
     );
   });
 }
@@ -131,13 +135,13 @@ function reportSubmission() {
   if (!raw) return;
   store.set('sessionStorage', SUBMITTED_KEY, null);
 
-  let details: { project?: string; town?: string } = {};
+  let details: { project?: string; town?: string; photos?: number } = {};
   try {
     details = JSON.parse(raw);
   } catch {}
 
   // Never send name, email, phone or message to any tracker.
-  window.posthog?.capture('estimate_submitted', { project: details.project, town: details.town });
+  window.posthog?.capture('estimate_submitted', { project: details.project, town: details.town, photos: details.photos ?? 0 });
   window.fbq?.('track', 'Lead', { content_name: details.project });
   window.ndp?.('track', 'LEAD');
   googleConversion(googleLeadLabel);
