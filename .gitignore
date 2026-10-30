@@ -6,6 +6,10 @@ dist/
 .env.*
 !.env.example
 
+# The repo root has no package.json (web/ and studio/ each have their own), so an
+# npm command run here just leaves an empty lockfile behind.
+/package-lock.json
+
 # Original client files (large videos/HEIC/AI). Web-ready copies live in web/src/assets.
 clientAssets/
 
