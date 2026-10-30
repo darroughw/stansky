@@ -22,6 +22,14 @@ describe('telHref', () => {
   });
 });
 
+describe('smsHref', () => {
+  it('turns a formatted US number into a text-message link', async () => {
+    const { smsHref } = await import('../../src/data/business');
+    expect(smsHref('(336) 399-5500')).toBe('sms:+13363995500');
+    expect(smsHref('1-336-399-5500')).toBe('sms:+13363995500');
+  });
+});
+
 describe('listJoin', () => {
   it('joins towns the way the site writes lists', async () => {
     const { listJoin } = await import('../../src/data/business');

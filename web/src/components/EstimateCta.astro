@@ -1,10 +1,19 @@
 ---
+import { getCollection } from 'astro:content';
 import { business, telHref } from '../data/business';
 
 interface Props {
   heading?: string;
+  /** Show a client review beside the buttons. Off where the page already shows reviews. */
+  review?: boolean;
 }
-const { heading = 'Start your project today' } = Astro.props;
+const { heading = 'Start your project today', review: showReview = true } = Astro.props;
+
+// A short review right where people decide whether to get in touch. Each page gets one
+// of the short ones, picked from its path so it stays the same between builds.
+const short = (await getCollection('reviews')).filter((r) => r.data.text.length <= 280);
+const seed = [...Astro.url.pathname].reduce((n, c) => n + c.charCodeAt(0), 0);
+const review = showReview && short.length > 0 ? short[seed % short.length] : undefined;
 ---
 
 <section class="cta" aria-labelledby="cta-heading">
@@ -15,6 +24,24 @@ const { heading = 'Start your project today' } = Astro.props;
         Contact us to schedule a walkthrough. Jack will visit your home, talk through your plans and
         provide a written estimate.
       </p>
+      {
+        review && (
+          <figure class="cta__review">
+            <blockquote>
+              <p>“{review.data.text}”</p>
+            </blockquote>
+            <figcaption>
+              {review.data.rating === 5 && (
+                <>
+                  <span aria-hidden="true">★★★★★ </span>
+                  <span class="visually-hidden">5 stars, </span>
+                </>
+              )}
+              {review.data.author}
+            </figcaption>
+          </figure>
+        )
+      }
     </div>
     <div class="cta__actions">
       <a class="button cta__primary" href="/contact/">Request an estimate</a>
@@ -48,6 +75,21 @@ const { heading = 'Start your project today' } = Astro.props;
   }
   .cta p {
     margin: 0;
+  }
+  .cta__review {
+    margin: var(--space-s) 0 0;
+    padding-left: var(--space-s);
+    border-left: 3px solid rgba(255, 255, 255, 0.6);
+    max-width: 38rem;
+  }
+  .cta__review blockquote {
+    margin: 0;
+    font-style: italic;
+  }
+  .cta__review figcaption {
+    margin-top: 0.35rem;
+    font-size: var(--step--1);
+    font-weight: 700;
   }
   .cta__actions {
     display: flex;

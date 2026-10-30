@@ -4,7 +4,13 @@
 //   estimate_form_started  first interaction with the estimate form
 //   estimate_submitted     the thanks page after a real submit (Lead conversion for ads)
 //   phone_clicked          any tap on a tel: link (Contact for ads; calls are most leads)
+//   text_clicked           any tap on an sms: link (Contact for ads)
 //   email_clicked          any mailto: link
+//
+// Visiting any page with ?internal=1 marks that browser as ours (Jack, the site builder):
+// PostHog files it under internal users, which its reports leave out by default, and the
+// ad pixels never hear about its leads, calls or texts, so tests don't teach the ads to
+// find more people like us. ?internal=0 undoes it.
 //
 // It also remembers where a visitor came from (UTM tags, ad click IDs, referrer) and
 // writes a readable summary into the estimate form, so each request Jack gets by email
@@ -13,7 +19,7 @@
 type Fn = (...args: unknown[]) => void;
 declare global {
   interface Window {
-    posthog?: { capture: Fn };
+    posthog?: { capture: Fn; setPersonProperties?: Fn };
     fbq?: Fn;
     ndp?: Fn;
     gtag?: Fn;
@@ -26,6 +32,7 @@ const googleCallLabel = import.meta.env.PUBLIC_GOOGLE_ADS_CALL_LABEL?.trim();
 
 const ATTRIBUTION_KEY = 'stansky-attribution';
 const SUBMITTED_KEY = 'stansky-estimate-submitted';
+const INTERNAL_KEY = 'stansky-internal';
 
 const store = {
   get(storage: 'localStorage' | 'sessionStorage', key: string) {
@@ -45,7 +52,27 @@ const store = {
   },
 };
 
+// --- Our own visits -------------------------------------------------------------------
+
+function markInternal(): boolean {
+  const flag = new URLSearchParams(location.search).get('internal');
+  if (flag === '1' || flag === '0') {
+    store.set('localStorage', INTERNAL_KEY, flag === '1' ? '1' : null);
+    // $internal_or_test_user is what the "Internal / Test users" cohort matches on.
+    window.posthog?.setPersonProperties?.({ $internal_or_test_user: flag === '1' });
+  }
+  return store.get('localStorage', INTERNAL_KEY) === '1';
+}
+
+const internal = markInternal();
+
+const ads = {
+  fbq: (...args: unknown[]) => !internal && window.fbq?.(...args),
+  ndp: (...args: unknown[]) => !internal && window.ndp?.(...args),
+};
+
 function googleConversion(label: string | undefined) {
+  if (internal) return;
   if (googleAdsId && label) window.gtag?.('event', 'conversion', { send_to: `${googleAdsId}/${label}` });
 }
 
@@ -142,24 +169,27 @@ function reportSubmission() {
 
   // Never send name, email, phone or message to any tracker.
   window.posthog?.capture('estimate_submitted', { project: details.project, town: details.town, photos: details.photos ?? 0 });
-  window.fbq?.('track', 'Lead', { content_name: details.project });
-  window.ndp?.('track', 'LEAD');
+  ads.fbq('track', 'Lead', { content_name: details.project });
+  ads.ndp('track', 'LEAD');
   googleConversion(googleLeadLabel);
 }
 
-// --- Phone and email taps ------------------------------------------------------------
+// --- Phone, text and email taps ------------------------------------------------------
+
+const CONTACT_EVENTS = { 'tel:': 'phone_clicked', 'sms:': 'text_clicked', 'mailto:': 'email_clicked' } as const;
 
 function watchContactLinks() {
   document.addEventListener('click', (event) => {
-    const link = (event.target as Element | null)?.closest?.('a[href^="tel:"], a[href^="mailto:"]');
+    const link = (event.target as Element | null)?.closest?.('a[href^="tel:"], a[href^="sms:"], a[href^="mailto:"]');
     if (!link) return;
-    const isPhone = link.getAttribute('href')!.startsWith('tel:');
+    const scheme = link.getAttribute('href')!.split(':')[0] + ':';
+    const name = CONTACT_EVENTS[scheme as keyof typeof CONTACT_EVENTS];
     const area = link.closest<HTMLElement>('[data-placement], header, footer, section, main');
     const where = { page: location.pathname, placement: area?.dataset.placement ?? area?.tagName.toLowerCase() };
 
-    window.posthog?.capture(isPhone ? 'phone_clicked' : 'email_clicked', where);
-    window.fbq?.('track', 'Contact');
-    if (isPhone) googleConversion(googleCallLabel);
+    window.posthog?.capture(name, where);
+    ads.fbq('track', 'Contact');
+    if (name === 'phone_clicked') googleConversion(googleCallLabel);
   });
 }
 

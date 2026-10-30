@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { business, telHref } from '../data/business';
+import { business, telHref, smsHref } from '../data/business';
 import { breadcrumbSchema } from '../lib/schema';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
@@ -28,14 +28,17 @@ const site = Astro.site!.href.replace(/\/$/, '');
       <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Contact', href: '/contact/' }]} />
       <h1>Request an estimate</h1>
       <p class="lede">
-        Tell us about your project and Jack will contact you to schedule a time to visit your home.
+        Leave your name and number and Jack will call you to set up a time to see your home.
       </p>
       <dl class="direct">
         {
           business.phone && (
             <>
               <dt class="label">Phone</dt>
-              <dd><a href={telHref(business.phone)}>{business.phone}</a></dd>
+              <dd>
+                <a href={telHref(business.phone)}>{business.phone}</a>
+                <span class="direct__text">· <a href={smsHref(business.phone)}>Send a text</a></span>
+              </dd>
             </>
           )
         }
@@ -63,12 +66,13 @@ const site = Astro.site!.href.replace(/\/$/, '');
         <input id="name" name="name" type="text" autocomplete="name" required />
       </div>
       <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required />
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" required aria-describedby="phone-hint" />
+        <p class="hint" id="phone-hint">Jack will call or text to set up a visit.</p>
       </div>
       <div class="field">
-        <label for="phone">Phone <span class="optional">(optional)</span></label>
-        <input id="phone" name="phone" type="tel" autocomplete="tel" />
+        <label for="email">Email <span class="optional">(optional)</span></label>
+        <input id="email" name="email" type="email" autocomplete="email" />
       </div>
       <div class="field">
         <label for="town">Town</label>
@@ -84,8 +88,8 @@ const site = Astro.site!.href.replace(/\/$/, '');
         </select>
       </div>
       <div class="field">
-        <label for="message">Tell us about it</label>
-        <textarea id="message" name="message" rows="6" required aria-describedby="message-hint"></textarea>
+        <label for="message">Tell us about it <span class="optional">(optional)</span></label>
+        <textarea id="message" name="message" rows="4" aria-describedby="message-hint"></textarea>
         <p class="hint" id="message-hint">What you'd like done, and roughly when.</p>
       </div>
       <div class="field">
@@ -135,6 +139,9 @@ const site = Astro.site!.href.replace(/\/$/, '');
   .direct dd {
     margin: 0;
     font-size: var(--step-1);
+  }
+  .direct__text {
+    white-space: nowrap;
   }
 
   .form {

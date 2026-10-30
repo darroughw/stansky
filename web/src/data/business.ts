@@ -62,4 +62,7 @@ export const serviceAreaText = listJoin(business.serviceArea);
 
 export const telHref = (phone: string) => `tel:+1${phone.replace(/\D/g, '').replace(/^1/, '')}`;
 
+/** Opens a new text message to the number (assumes it's a cell that takes texts). */
+export const smsHref = (phone: string) => `sms:+1${phone.replace(/\D/g, '').replace(/^1/, '')}`;
+
 export const sameAs = Object.values(business.social).filter(Boolean);

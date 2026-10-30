@@ -1,16 +1,22 @@
 ---
-// Phones only: call and estimate buttons that stay within thumb reach on every page,
+// Phones only: call, text and estimate buttons that stay within thumb reach on every page,
 // so a visitor reading a service or project page never has to scroll to the bottom
-// (or back to the top) to get in touch. Left off the contact pages, where the form is.
-import { business, telHref } from '../data/business';
+// (or back to the top) to get in touch. Text is there for people who'd rather not make a
+// cold call to a contractor. Left off the contact pages, where the form is.
+import { business, telHref, smsHref } from '../data/business';
 ---
 
 <nav class="contact-bar" aria-label="Contact" data-placement="contact-bar">
   {
     business.phone && (
-      <a class="button button--ghost contact-bar__call" href={telHref(business.phone)}>
-        Call
-      </a>
+      <>
+        <a class="button button--ghost contact-bar__call" href={telHref(business.phone)}>
+          Call
+        </a>
+        <a class="button button--ghost contact-bar__text" href={smsHref(business.phone)}>
+          Text
+        </a>
+      </>
     )
   }
   <a class="button contact-bar__estimate" href="/contact/">Get an estimate</a>
@@ -37,7 +43,8 @@ import { business, telHref } from '../data/business';
       padding-inline: 0.75em;
       white-space: nowrap;
     }
-    .contact-bar__call {
+    .contact-bar__call,
+    .contact-bar__text {
       flex: 1;
       background: #fff;
     }

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // track.ts does its work on import, so each test sets up the page and then loads it fresh.
 const listeners: [string, EventListenerOrEventListenerObject][] = [];
-const trackers = { posthog: vi.fn(), fbq: vi.fn(), ndp: vi.fn(), gtag: vi.fn() };
+const trackers = { posthog: vi.fn(), setPersonProperties: vi.fn(), fbq: vi.fn(), ndp: vi.fn(), gtag: vi.fn() };
 
 const FORM = `
   <form name="estimate">
@@ -38,7 +38,7 @@ beforeEach(() => {
   localStorage.clear();
   sessionStorage.clear();
   Object.values(trackers).forEach((t) => t.mockReset());
-  window.posthog = { capture: trackers.posthog };
+  window.posthog = { capture: trackers.posthog, setPersonProperties: trackers.setPersonProperties };
   window.fbq = trackers.fbq;
   window.ndp = trackers.ndp;
   window.gtag = trackers.gtag;
@@ -201,6 +201,17 @@ describe('contact link taps', () => {
     expect(trackers.gtag).not.toHaveBeenCalled();
   });
 
+  it('reports text taps without a Google Ads call conversion', async () => {
+    vi.stubEnv('PUBLIC_GOOGLE_ADS_ID', 'AW-999');
+    vi.stubEnv('PUBLIC_GOOGLE_ADS_CALL_LABEL', 'calllbl');
+    visit('/portfolio/', { html: '<nav data-placement="contact-bar"><a href="sms:+13363995500">Text</a></nav>' });
+    await loadTracker();
+    tap(document.querySelector('a')!);
+    expect(trackers.posthog).toHaveBeenCalledWith('text_clicked', { page: '/portfolio/', placement: 'contact-bar' });
+    expect(trackers.fbq).toHaveBeenCalledWith('track', 'Contact');
+    expect(trackers.gtag).not.toHaveBeenCalled();
+  });
+
   it('ignores ordinary links', async () => {
     visit('/', { html: '<main><a href="/portfolio/">Our work</a></main>' });
     await loadTracker();
@@ -216,5 +227,40 @@ describe('contact link taps', () => {
     visit('/', { html: '<header><a href="tel:+13363995500">Call</a></header>' });
     await loadTracker();
     expect(() => tap(document.querySelector('a')!)).not.toThrow();
+  });
+});
+
+describe('our own visits', () => {
+  it('marks the browser as internal and keeps its leads and taps away from the ads', async () => {
+    vi.stubEnv('PUBLIC_GOOGLE_ADS_ID', 'AW-999');
+    vi.stubEnv('PUBLIC_GOOGLE_ADS_LEAD_LABEL', 'leadlbl');
+    vi.stubEnv('PUBLIC_GOOGLE_ADS_CALL_LABEL', 'calllbl');
+    visit('/?internal=1');
+    await loadTracker();
+    expect(trackers.setPersonProperties).toHaveBeenCalledWith({ $internal_or_test_user: true });
+
+    // Later visits remember it without the query string.
+    visit('/contact/', { html: FORM });
+    await loadTracker();
+    document.querySelector('form')!.dispatchEvent(new Event('submit'));
+    visit('/contact/thanks/', { html: '<header><a href="tel:+13363995500">Call</a></header>' });
+    await loadTracker();
+    tap(document.querySelector('a')!);
+
+    expect(trackers.posthog).toHaveBeenCalledWith('estimate_submitted', expect.anything());
+    expect(trackers.posthog).toHaveBeenCalledWith('phone_clicked', expect.anything());
+    expect(trackers.fbq).not.toHaveBeenCalled();
+    expect(trackers.ndp).not.toHaveBeenCalled();
+    expect(trackers.gtag).not.toHaveBeenCalled();
+  });
+
+  it('can be undone with ?internal=0', async () => {
+    visit('/?internal=1');
+    await loadTracker();
+    visit('/?internal=0', { html: '<header><a href="tel:+13363995500">Call</a></header>' });
+    await loadTracker();
+    expect(trackers.setPersonProperties).toHaveBeenLastCalledWith({ $internal_or_test_user: false });
+    tap(document.querySelector('a')!);
+    expect(trackers.fbq).toHaveBeenCalledWith('track', 'Contact');
   });
 });
