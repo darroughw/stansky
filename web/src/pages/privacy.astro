@@ -1,0 +1,110 @@
+---
+// Names every tracker that has an ID set in Netlify (see src/lib/analytics.ts), so the page
+// stays accurate as pixels are switched on. Meta's terms require a page like this before
+// running ads with the pixel.
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { business, listJoin, telHref } from '../data/business';
+import { trackersSet } from '../lib/analytics';
+
+// Update when this page's wording changes.
+const updated = 'November 5, 2026';
+const name = business.legalName || business.name;
+
+const adTrackers = [
+  trackersSet.meta && 'Meta (Facebook and Instagram)',
+  trackersSet.nextdoor && 'Nextdoor',
+  trackersSet.googleAds && 'Google Ads',
+].filter((t): t is string => Boolean(t));
+---
+
+<Base
+  title="Privacy policy | Stansky Construction"
+  description={`How ${business.name} handles the information you send through this website.`}
+>
+  <article class="wrap section">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Privacy policy', href: '/privacy/' }]} />
+    <div class="prose">
+      <h1>Privacy policy</h1>
+      <p class="lede">
+        This page explains what {name} learns when you visit stanskyconstruction.com or ask for an
+        estimate, and what happens to it.
+      </p>
+      <p><small>Last updated {updated}.</small></p>
+
+      <h2>When you ask for an estimate</h2>
+      <p>
+        The estimate form asks for your name, email, phone number, town, the kind of project and a
+        description, and lets you attach up to three photos. The form is handled by our web host,
+        Netlify, which passes your request on to {business.owner} by email. It also notes how you
+        found the site (for example, a Facebook ad or a Google search) so we know which ads are
+        worth paying for.
+      </p>
+      <p>
+        We use what you send only to reply to you and to plan and quote your project. Your name, email,
+        phone number, message and photos are never sent to any analytics or advertising service.
+      </p>
+
+      {
+        trackersSet.posthog && (
+          <>
+            <h2>Site analytics</h2>
+            <p>
+              We use PostHog to see how people use the site: which pages they visit, where they came from,
+              and whether they reach the estimate form. PostHog may record visits as anonymous session
+              replays so we can find parts of the site that are confusing. Anything typed into a form is
+              hidden in those recordings.
+            </p>
+          </>
+        )
+      }
+
+      {
+        adTrackers.length > 0 && (
+          <>
+            <h2>Advertising pixels</h2>
+            <p>
+              We advertise on {listJoin(adTrackers)}, and the site uses {adTrackers.length > 1 ? 'their tracking pixels' : 'its tracking pixel'}.
+              A pixel tells the ad platform when someone visits the site, sends an estimate request, or taps
+              to call, text or email us. The platform uses this to measure our ads and to show them to people
+              likely to need our work. It may connect this activity to your account with them, under their
+              own privacy policy.
+            </p>
+            <p>You can limit this in your settings with each platform:</p>
+            <ul>
+              {trackersSet.meta && (
+                <li><a href="https://www.facebook.com/adpreferences/">Facebook ad preferences</a> and <a href="https://www.facebook.com/privacy/policy/">Meta's privacy policy</a></li>
+              )}
+              {trackersSet.nextdoor && (
+                <li><a href="https://help.nextdoor.com/s/article/About-ads-on-Nextdoor">About ads on Nextdoor</a> and <a href="https://nextdoor.com/privacy_policy/">Nextdoor's privacy policy</a></li>
+              )}
+              {trackersSet.googleAds && (
+                <li><a href="https://myadcenter.google.com/">Google My Ad Center</a> and <a href="https://policies.google.com/privacy">Google's privacy policy</a></li>
+              )}
+            </ul>
+          </>
+        )
+      }
+
+      {
+        (trackersSet.posthog || adTrackers.length > 0) && (
+          <>
+            <h2>Cookies and blocking</h2>
+            <p>
+              {adTrackers.length > 0 ? 'These services use' : 'PostHog uses'} cookies and similar browser storage
+              to recognize a returning visitor. The site works fully if you block them with your browser's
+              privacy settings or a content blocker.
+            </p>
+          </>
+        )
+      }
+
+      <h2>Questions</h2>
+      <p>
+        To ask what we have from you, or to have it deleted, contact {business.owner}
+        {business.email && <> at <a href={`mailto:${business.email}`}>{business.email}</a></>}
+        {business.phone && <>{business.email ? ' or ' : ' at '}<a href={telHref(business.phone)}>{business.phone}</a></>}.
+      </p>
+    </div>
+  </article>
+</Base>

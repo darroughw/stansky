@@ -72,7 +72,7 @@ clientAssets/               Jack's original photos and logo files (not in git)
 
 ## Analytics and ad tracking
 
-Off until an ID is set in Netlify (**Site configuration > Environment variables**), then live on the next production deploy. Deploy previews and local builds never load trackers.
+Off until an ID is set in Netlify (**Site configuration > Environment variables**), then live on the next production deploy. Deploy previews and local builds never load trackers. The privacy policy at `/privacy/` names whichever trackers have an ID set, so it updates itself when one is switched on.
 
 | Variable | What it turns on |
 |---|---|
@@ -116,7 +116,7 @@ Every estimate request also carries a **`lead_source`** field, such as `facebook
 - [ ] Jack invited to Sanity as an Editor
 - [ ] Domain added in Netlify and DNS updated at GoDaddy
 - [ ] `SITE_LIVE=true` set in Netlify, then redeploy
-- [ ] Before running ads: tracker IDs set in Netlify, a privacy policy page that names the pixels (Meta's terms require one), and a test lead checked in each ad platform's events tool
+- [ ] Before running ads: tracker IDs set in Netlify, Jack reads `/privacy/` and confirms it, and a test lead checked in each ad platform's events tool
 - [ ] Google Business Profile claimed and matching the site's name, phone and service area
 
 ## Credits

@@ -32,6 +32,15 @@ describe('analytics switch', () => {
     }
   });
 
+  it('reports which trackers are set for the privacy page, even on deploy previews', async () => {
+    vi.stubEnv('CONTEXT', 'deploy-preview');
+    vi.stubEnv('PUBLIC_META_PIXEL_ID', '123');
+    vi.stubEnv('PUBLIC_NEXTDOOR_PIXEL_ID', '  ');
+    const { trackersSet, analyticsEnabled } = await load();
+    expect(analyticsEnabled).toBe(false);
+    expect(trackersSet).toEqual({ posthog: false, meta: true, nextdoor: false, googleAds: false });
+  });
+
   it('treats a blank or whitespace ID as not set', async () => {
     vi.stubEnv('CONTEXT', 'production');
     vi.stubEnv('PUBLIC_NEXTDOOR_PIXEL_ID', '   ');

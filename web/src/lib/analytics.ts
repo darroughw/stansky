@@ -22,4 +22,15 @@ export const analytics = {
   googleAdsId: id(env.PUBLIC_GOOGLE_ADS_ID),
 };
 
-export const analyticsEnabled = Object.entries(analytics).some(([key, value]) => key !== 'posthogHost' && value);
+/**
+ * Which trackers have an ID set, whatever the deploy context. The privacy page names these,
+ * so a deploy preview shows the same policy production will.
+ */
+export const trackersSet = {
+  posthog: Boolean(env.PUBLIC_POSTHOG_KEY?.trim()),
+  meta: Boolean(env.PUBLIC_META_PIXEL_ID?.trim()),
+  nextdoor: Boolean(env.PUBLIC_NEXTDOOR_PIXEL_ID?.trim()),
+  googleAds: Boolean(env.PUBLIC_GOOGLE_ADS_ID?.trim()),
+};
+
+export const analyticsEnabled =Object.entries(analytics).some(([key, value]) => key !== 'posthogHost' && value);
